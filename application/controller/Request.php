@@ -72,6 +72,7 @@ class Request extends ActionController
     {
         $this->checkUserPrivilege();
         $data['form_title'] = "Document Requisition";
+        $this->load->js('scripts/js/common-form-functions');
         $this->load->js('scripts/js/docu-requisition');
         $this->load->completeView('request/generic_view', $data);
     }
@@ -89,7 +90,7 @@ class Request extends ActionController
     {
         $this->checkUserPrivilege();
         $data['form_title'] = "New Sales Agent";
-        $this->load->js('scripts/js/common-buttons');
+        $this->load->js('scripts/js/common-form-functions');
         $this->load->js('scripts/js/request-form');
         $this->load->js('scripts/js/new-sales-agent');
         $this->load->completeView('request/generic_view',$data);
@@ -99,8 +100,8 @@ class Request extends ActionController
     {
         $this->checkUserPrivilege();
         $data['form_title'] = "Accountable Forms";
-        $this->load->js('scripts/js/common-buttons');
-        $this->load->js('scripts/js/request-form');
+        $this->load->js('scripts/js/common-form-functions');
+         $this->load->js('scripts/js/request-form');
         $this->load->js('scripts/js/accountable-forms');
         $this->load->completeView('request/generic_view',$data);
     }

@@ -54,7 +54,7 @@ class RequestModel extends Model
     public function insertDetails($request_code)
     {
         $query = "";
-
+        $current_id = $this->current_request_id;
         switch ($request_code) 
         {
             case 'ERQ_RM':
@@ -62,7 +62,7 @@ class RequestModel extends Model
                             (HEADERID, SUTYPE, MCMAKECODE, MCMODEL, MCPLATENO, MCENGINENO, MCCHASSISNO, ACQUIREDDATE, 
                             ODOMREADING, LASTPMSDATE, SERVINGSHOP, STORE2NAME, STORE3NAME, VERIFIEDBADGENO, VERIFIEDNAME, VERIFIEDPOSITION, VERIFIEDDATE, 
                             RECOMBADGENO, RECOMNAME, RECOMPOSITION, RECOMDATE, REMARKS, CREATEDDATE, CREATEDBY)
-                            VALUES('{$this->current_request_id}',?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,CURRENT_TIMESTAMP,?)";
+                            VALUES('{$current_id}',?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,CURRENT_TIMESTAMP,?)";
                 break;
 
             case 'ERQ_FL':
@@ -70,18 +70,23 @@ class RequestModel extends Model
                             (HEADERID,SUTYPE,MCMAKECODE,MCMODEL,MCPLATENO,MCENGINENO,MCCHASSISNO,ACQUIREDDATE,ODOMREADING,
                             LASTPMSDATE,SERVINGSHOP,ITEMCODE,ITEMBRAND,LASTREQDATE,PCIPRICE,STORE2NAME,STORE2PRICE,STORE3NAME,
                             STORE3PRICE,VERIFIEDBADGENO,VERIFIEDNAME,VERIFIEDPOSITION,VERIFIEDDATE,RECOMBADGENO,RECOMNAME,RECOMPOSITION,RECOMDATE,REMARKS,CREATEDDATE,CREATEDBY)
-                            VALUES('{$this->current_request_id}',?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,CURRENT_TIMESTAMP,?)";
+                            VALUES('{$current_id}',?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,CURRENT_TIMESTAMP,?)";
                 break;
             case 'ERQ_RES':
                 $query =    "INSERT INTO EREQRES
                             (HEADERID,EFFECTDATE,AGREEMENTNO,AGREEMENTNAME,REQTYPECODE,OLDTERM,OLDDUEDAY,OLDMA,
                             CNCAPPROVERBADGENO,CNCAPPROVERNAME,CNCAPPROVERPOSITION,CNCAPPROVERDATE, REMARKS, CREATEDDATE, CREATEDBY)
-                            VALUES( '{$this->current_request_id}',?,?,?,?,?,?,?,?,?,?,?,?,CURRENT_TIMESTAMP, ?)";
+                            VALUES( '{$current_id}',?,?,?,?,?,?,?,?,?,?,?,?,CURRENT_TIMESTAMP, ?)";
                 break;
             case 'ERQ_PRE': 
                 $query  =   "INSERT INTO EREQPRE
                             (HEADERID,EFFECTDATE,AGREEMENTNO,AGREEMENTNAME,REMARKS,CREATEDDATE,CREATEDBY)
-                            VALUES('{$this->current_request_id}',?,?,?,?,CURRENT_TIMESTAMP,?)";
+                            VALUES('{$current_id}',?,?,?,?,CURRENT_TIMESTAMP,?)";
+                break;
+            case 'ERQ_DOC':
+                $query  =   "INSERT INTO EREQDOC
+                            (HEADERID,AGREEMENTNO,AGREEMENTNAME,MSIDATE,MCENGINENO,DOCTYPECODE,PURPOSECODE,REMARKS,CREATEDDATE,CREATEDBY)
+                            VALUES('{$current_id}',?,?,?,?,?,?,?,CURRENT_TIMESTAMP,?)"; 
                 break;
         }
         
@@ -91,12 +96,25 @@ class RequestModel extends Model
     }
 
 
-    public function insertItem()
+    public function insertItem($request_code)
     {
-        $query =    "INSERT INTO EREQRMDTL
+        $current_id = $this->current_request_id;
+        switch ($request_code) 
+        {
+            case 'ERQ_RM':
+                $query  =   "INSERT INTO EREQRMDTL
                             (HEADERID,ITEMNO,ITEMCODE,ITEMQTY,ITEMBRAND,LASTREQDATE,PCIPRICE,STORE2PRICE,STORE3PRICE,CREATEDDATE,CREATEDBY)
-                    VALUES('{$this->current_request_id}',?,?,?,?,?,?,?,?,CURRENT_TIMESTAMP,?)";
-
+                            VALUES('{current_id}',?,?,?,?,?,?,?,?,CURRENT_TIMESTAMP,?)";
+                break;
+            
+            case 'ERQ_FRM':
+                $query  =   "INSERT INTO EREQFRMDTL
+                            (HEADERID,ITEMNO,ITEMCODE,CURRPADFROM,CURRPADTO,CURRPADLAST,CURRPADLASTDATE,UNUSEDPADFROM,UNUSEDPADTO,UNUSEDPADNUMBOOK,
+                            PERSBADGENO,PERSNAME,PERSPOSITION,PERSREMARKS,CREATEDDATE,CREATEDBY)
+                            VALUES('{$current_id}',?,?,?,?,?,?,?,?,?,?,?,?,?,CURRENT_TIMESTAMP,?)";
+                break;
+        }
+        
         $this->db->prepare($query);
 
         $this->db->execute($this->request_item_arr);

@@ -8,11 +8,15 @@ class RequestFile extends ActionController
 
     private $required_data_arr;
 
+    private $success_msg;
 
     public function __construct()
     {
         parent::__construct();
         $this->ajax_result['success'] = false;
+
+        $this->success_msg = "Request succeeded.";
+
         $this->load->helper('sanitizer');
         $this->requestmodel = $this->load->model('RequestModel');
     }
@@ -39,8 +43,7 @@ class RequestFile extends ActionController
             $this->requestmodel->commitRequest();
 
             $this->ajax_result['success'] = true;
-
-            $this->ajax_result['message'] = 'Request succeeded.';
+            $this->ajax_result['message'] = $this->success_msg;
         }
         catch(Exception $e)
         {
@@ -56,11 +59,11 @@ class RequestFile extends ActionController
         try
         {   
             $header_details = $this->collectHeaderDetails('ERQ_RM');
-            $r_m_details    = $this->collectRMDtls();
+            $request_details= $this->collectRMDtls();
             $r_m_items      = $this->collectRMItems();
             
             $this->requestmodel->setHeaderDetails( $header_details );
-            $this->requestmodel->setRequestDetails( $r_m_details );
+            $this->requestmodel->setRequestDetails( $request_details );
 
             $this->requestmodel->insertHeader();
             $this->requestmodel->insertDetails('ERQ_RM');
@@ -68,13 +71,12 @@ class RequestFile extends ActionController
             foreach($r_m_items as $item)
             {
                 $this->requestmodel->setRequestItem($item);
-                $this->requestmodel->insertItem();
+                $this->requestmodel->insertItem("ERQ_RM");
             }
 
             $current_request_id = $this->requestmodel->getCurrentRequestID();
 
             $this->requestmodel->setHistoryDetails( array( $current_request_id,1,'',get_post('remarks'),userSession('userid') ) );
-
             $this->requestmodel->insertHistory();
 
             $this->uploadRequirements('ERQ_RM', $current_request_id);
@@ -82,8 +84,7 @@ class RequestFile extends ActionController
             $this->requestmodel->commitRequest();
 
             $this->ajax_result['success'] = true;
-
-            $this->ajax_result['message'] = 'Request succeeded.';
+            $this->ajax_result['message'] = $this->success_msg;
 
         }
         catch(Exception $e)
@@ -101,10 +102,10 @@ class RequestFile extends ActionController
         {   
 
             $header_details = $this->collectHeaderDetails('ERQ_RES');
-            $res_details    = $this->collectRESDtls();
+            $request_details= $this->collectRESDtls();
             
             $this->requestmodel->setHeaderDetails( $header_details );
-            $this->requestmodel->setRequestDetails( $res_details );
+            $this->requestmodel->setRequestDetails( $request_details );
 
             $this->requestmodel->insertHeader();
             $this->requestmodel->insertDetails('ERQ_RES');
@@ -112,7 +113,6 @@ class RequestFile extends ActionController
             $current_request_id = $this->requestmodel->getCurrentRequestID();
 
             $this->requestmodel->setHistoryDetails( array( $current_request_id,1,'',get_post('remarks'),userSession('userid') ) );
-
             $this->requestmodel->insertHistory();
 
             $this->uploadRequirements('ERQ_RES', $current_request_id);
@@ -120,8 +120,7 @@ class RequestFile extends ActionController
             $this->requestmodel->commitRequest();
 
             $this->ajax_result['success'] = true;
-
-            $this->ajax_result['message'] = 'Request succeeded.';
+            $this->ajax_result['message'] = $this->success_msg;
 
         }
         catch(Exception $e)
@@ -131,6 +130,74 @@ class RequestFile extends ActionController
         }
 
         echo json_encode($this->ajax_result);       
+    }
+
+    public function preTermination()
+    {
+        try
+        {   
+
+            $header_details = $this->collectHeaderDetails('ERQ_PRE');
+            $request_details= $this->collectPTDtls();
+            
+            $this->requestmodel->setHeaderDetails( $header_details );
+            $this->requestmodel->setRequestDetails( $request_details );
+
+            $this->requestmodel->insertHeader();
+            $this->requestmodel->insertDetails('ERQ_PRE');
+
+            $current_request_id = $this->requestmodel->getCurrentRequestID();
+
+            $this->requestmodel->setHistoryDetails( array( $current_request_id,1,'',get_post('remarks'),userSession('userid') ) );
+            $this->requestmodel->insertHistory();
+
+            $this->requestmodel->commitRequest();
+
+            $this->ajax_result['success'] = true;
+            $this->ajax_result['message'] = $this->success_msg;
+
+        }
+        catch(Exception $e)
+        {
+            $this->requestmodel->rollbackRequest();
+            $this->ajax_result['errormsg'] = $e->getMessage();
+        }
+
+        echo json_encode($this->ajax_result);   
+    }
+
+    public function document()
+    {
+        try
+        {   
+
+            $header_details = $this->collectHeaderDetails('ERQ_DOC');
+            $request_details   = $this->collectDocumentDtls();
+            
+            $this->requestmodel->setHeaderDetails( $header_details );
+            $this->requestmodel->setRequestDetails( $request_details );
+
+            $this->requestmodel->insertHeader();
+            $this->requestmodel->insertDetails('ERQ_DOC');
+
+            $current_request_id = $this->requestmodel->getCurrentRequestID();
+
+            $this->requestmodel->setHistoryDetails( array( $current_request_id,1,'',get_post('remarks'),userSession('userid') ) );
+            $this->requestmodel->insertHistory();
+
+            $this->requestmodel->commitRequest();
+
+            $this->ajax_result['success'] = true;
+            $this->ajax_result['message'] = $this->success_msg;
+
+        }
+        catch(Exception $e)
+        {
+            $this->requestmodel->rollbackRequest();
+            $this->ajax_result['errormsg'] = $e->getMessage();
+        }
+
+        echo json_encode($this->ajax_result); 
     }
 
 
@@ -330,5 +397,31 @@ class RequestFile extends ActionController
             post('remarks'),
             userSession('userid')
         );
+    }
+
+    private function collectPTDtls()
+    {
+        return array(
+            post('effective_date'),
+            post('agreement_no'),
+            post('agreement_name'),
+            post('remarks'),
+            userSession('userid')
+        );
+    }
+
+    private function collectDocumentDtls()
+    {
+        return array(
+            post('agreement_no'),
+            post('agreement_name'),
+            post('msi_date'),
+            post('engine_no'),
+            post('document_type'),
+            post('purpose'),
+            post('remarks'),
+            userSession('userid')
+        );
+
     }
 }

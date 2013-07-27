@@ -10,17 +10,17 @@ request_header =
         {
             items:
             [
-                {width:300, fieldLabel:'Branch Code', name:'branchcode', value:'414'},
+                {width:300, fieldLabel:'Branch Code',id:'requestor_branch_code',name:'requestor_branch_code'},
                 {xtype:'box',width:35,html:'&nbsp;'},
-                {labelWidth: 100,fieldLabel:'Branch Name', name:'branchdesc'},
+                {labelWidth: 100,fieldLabel:'Branch Name', id:'requestor_branch', name:'requestor_branch'},
                 {xtype:'box',width:35,html:'&nbsp;'},
-                {labelWidth: 100,fieldLabel:'Company', name:'company', value:'UCFC Head Office'},
+                {labelWidth: 100,fieldLabel:'Company', name:'company'},
             ]
         },
         {
             items:
             [
-                {width:300,fieldLabel:'Request Date', readOnly:true, name:'req_date', value:Ext.Date.format(new Date(), 'm/d/Y')}
+                {width:300,fieldLabel:'Request Date', readOnly:true, name:'request_date', value:_today}
             ]
         }
     ]
@@ -58,6 +58,9 @@ request_detail =
                             xtype:'combobox',
                             fieldLabel:'Type',
                             name:'type[]',
+                            store:dropDownStore('EREQUEST','FRM_TYPE'),
+                            displayField:'desc',
+                            valueField:'code',
                             width:200
                         },
                         {
@@ -143,9 +146,33 @@ request_detail =
         {
             items:
             [
-                {readOnly:true,fieldLabel:'Requested by',width:300,  name:'req_by', value:'Melchor Isidro'},
-                {xtype:'box',width:35,html:'&nbsp;'},
-                {readOnly:true,fieldLabel:'Position',labelWidth: 100, name:'req_position', value:'SA/QA Manager'}
+                {
+                    readOnly    :true,
+                    xtype       :'mytextfield',
+                    fieldLabel  :'Requested by',
+                    id          :'requestor_badge_no',
+                    name        :'requestor_badge_no', 
+                    emptyText   :'Badge No.',
+                    width       :200
+                },
+                {
+                    readOnly    :true,
+                    xtype       :'mytextfield',
+                    name        :'requestor_name',
+                    id          :'requestor_name',
+                    readOnly    :true,
+                    emptyText   :'Name',
+                    width       :200
+                },
+                {
+                    readOnly    :true,
+                    xtype       :'mytextfield',
+                    name        :'requestor_position',
+                    id          :'requestor_position',
+                    readOnly    :true,
+                    emptyText   :'Position',
+                    width       :200
+                }
             ]
         }
     ]
@@ -158,6 +185,9 @@ Ext.onReady(function(){
     request_form.add([request_header,request_detail]);
     request_form.down('toolbar').add(submit_btn, clear_btn, cancel_btn);
     request_form.render('request-form-container');
+
+    fillFormValue();
+
 });
 
 
@@ -178,13 +208,17 @@ function addRequestItem()
         var new_fieldset = detail_panel.getComponent(0).cloneConfig({id:new_id, title: new_fieldset_title});
 
         //insert close button..
-        new_fieldset.insert(0, {xtype:'button',iconCls:'close-icon',style:'position:absolute; top: 0px; right: 10px',
-                    handler:function()
-                    {
+        new_fieldset.insert(0, 
+            {
+                xtype:'button',
+                iconCls:'close-icon',
+                style:'position:absolute; top: 0px; right: 10px',
+                handler:function()
+                {
                         this.findParentByType('fieldset').destroy();
                         idgen--;
-                    }
-                });
+                }
+            });
                        
 
         detail_panel.insert(index, new_fieldset);

@@ -6,7 +6,7 @@ Ext.require([
 		'Ext.form.*'
 	]);
 
-request_panel =
+request_form =
 Ext.create('Ext.form.FormPanel',
 {
 	title 		:'Request Details',
@@ -25,12 +25,13 @@ Ext.create('Ext.form.FormPanel',
         autoHeight  :true,
         bodyStyle   :'background-color:transparent;',
         layout      :'column',
-        defaultType :'textfield',
+        defaultType :'mytextfield',
         defaults    :
         {
             readOnly    :false,
             width       :300,
-            labelWidth  :115
+            labelWidth  :115,
+            allowBlank  :false
         }
     },
     items:
@@ -40,8 +41,8 @@ Ext.create('Ext.form.FormPanel',
     		[
     			{
     				fieldLabel:'Branch Code',
-    				id:'branchcode',
-    				name:'branchcode'
+    				id:'requestor_branch_code',
+    				name:'requestor_branch_code'
     			},
     			{
     				xtype:'box',
@@ -50,9 +51,8 @@ Ext.create('Ext.form.FormPanel',
     			},
     			{
     				fieldLabel:'Request Date',
-    				id:'req-date',
-    				name:'reqdate',
-    				value:Ext.Date.format(new Date(), 'm/d/Y'),
+    				name:'request_date',
+    				value:_today,
     				readOnly:true
     			}
     		]
@@ -60,11 +60,12 @@ Ext.create('Ext.form.FormPanel',
     	{
     		items:
     		[
-    			{
-    				fieldLabel:'Agreement No.',
-    				id:'agreement-no',
-    				name:'agreementno'
-    			},
+                {
+                    fieldLabel:'Branch Name',
+                    id:'requestor_branch',
+                    name:'requestor_branch'
+                },
+    			
     			{
     				xtype:'box',
     				width:100,
@@ -73,112 +74,148 @@ Ext.create('Ext.form.FormPanel',
     			{
     				xtype:'datefield',
     				fieldLabel:'MSI Date',
-    				id:'msi-date',
     				editable:false,
-    				name:'msidate'
+    				name:'msi_date',
+                    maxValue:_today
     			}
     		]
     	},
     	{
     		items:
     		[
-    			{
-    				fieldLabel:'Agreement Name',
-    				id:'agreement-name',
-    				name:'agreementname'
-    			},
+                {
+                    fieldLabel:'Agreement No.',
+                    id:'agreement_no',
+                    name:'agreement_no'
+                },
+    			
     			{
     				xtype:'box',
     				width:100,
     				html:'&nbsp;'
     			},
-    			{
-    				fieldLabel:'Engine No.',
-    				id:'engine-no',
-    				name:'engineno'
-    			}
+                {
+                    fieldLabel:'Agreement Name',
+                    id:'agreement_name',
+                    name:'agreement_name'
+                }
     		]
     	},
     	{
     		items:
     		[
-    			{
-    				xtype:'combobox',
-    				fieldLabel:'Document Type',
-    				id:'doc-type', 
-    				name:'doctype'
-    			},
+
+                {
+                    fieldLabel:'Engine No.',
+                    id:'engine_no',
+                    name:'engine_no'
+                },
     			{
     				xtype:'box',
     				width:100,
     				html:'&nbsp;'
     			},
-    			{
-    				xtype:'combobox',
-    				fieldLabel:'Purpose of Request', 
-    				id:'req-purpose', 
-    				name:'reqpurpose'
-    			}
+                {
+                    xtype:'combobox',
+                    fieldLabel:'Document Type',
+                    store:dropDownStore('EREQUEST','DOC_TYPE'),
+                    displayField:'desc',
+                    valueField:'code',
+                    id:'document_type', 
+                    name:'document_type'
+                }
     		]
     	},
+        {
+            items:
+            [
+                {
+                    xtype:'combobox',
+                    fieldLabel:'Purpose of Request', 
+                    store:dropDownStore('EREQUEST','DOC_PURP'),
+                    displayField:'desc',
+                    valueField:'code',
+                    editable:false,
+                    width:400,
+                    id:'purpose', 
+                    name:'purpose'
+                }
+            ]
+        },
+        {
+            items:
+            [
+                {
+                    xtype       :'textarea',
+                    name        :'remarks',
+                    fieldLabel  :'Remarks',
+                    maxLength   :150,
+                    width       :700,
+                    height      :50,
+                    emptyText   :'Type your remarks here..',
+                    allowBlank  :true,
+                    enableKeyEvents:true,
+                    listeners   :{
+                        keypress:function(f,e)
+                        {
+                            if((this.getValue().length >= this.maxLength) && e.getKey() != 8)
+                            {
+                                e.stopEvent();
+                            }
+                        }
+                    }
+                }
+            ]
+        },
     	{
     		bodyStyle:'padding-top:50px; background-color:transparent;',
     		items:
     		[
     			{
-    				xtype:'displayfield', 
-    				fieldLabel:'Requested by', 
-    				id:'req-by',
-    				name:'reqby'
-    			},
-    			{
-    				xtype:'box',	
-    				width:100,	
-    				html:'&nbsp;'
-    			},
-    			{
-    				xtype:'displayfield',
-    				fieldLabel:'Position',
-    				id:'position',
-    				name:'position'
-    			}
+                    readOnly    :true,
+                    xtype       :'mytextfield',
+                    fieldLabel  :'Requested by',
+                    id          :'requestor_badge_no',
+                    name        :'requestor_badge_no', 
+                    emptyText   :'Badge No.',
+                    // labelWidth  :105,
+                    width       :200
+                },
+                {
+                    readOnly    :true,
+                    xtype       :'mytextfield',
+                    name        :'requestor_name',
+                    id          :'requestor_name',
+                    readOnly    :true,
+                    emptyText   :'Name',
+                    width       :200
+                },
+                {
+                    readOnly    :true,
+                    xtype       :'mytextfield',
+                    name        :'requestor_position',
+                    id          :'requestor_position',
+                    readOnly    :true,
+                    emptyText   :'Position',
+                    width       :200
+                }
     		]
     	}
     ],
     buttonAlign:'center',
     buttons:
     [
-    	{
-    		text:'Submit',
-    		iconCls:'submit-icon',
-    		autoWidth:true,
-    		handler:function()
-    		{
-    			return this;
-    		}
-    	},
-    	{
-    		text:'Clear',
-    		iconCls:'erase-icon',
-    		autoWidth:true,
-    		handler:function()
-    		{
-    			return this;
-    		}
-    	},
-    	{
-	    	text:'Cancel',
-	    	iconCls:'exit-icon',
-	    	autoWidth:true,
-	    	handler:function()
-	    	{
-	    		return this;
-	    	}
-	    }
+    	submit_btn, clear_btn, cancel_btn
     ]
 });
 
 Ext.onReady(function()
 {
-	request_panel.render('request-form-container');
+	request_form.render('request-form-container');
+
+    fillFormValue();
+
+    Ext.getCmp('submit-btn').on('click',function(){
+        submitRequestForm('document');
+    });
 });

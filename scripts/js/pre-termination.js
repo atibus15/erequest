@@ -61,7 +61,7 @@ Ext.create('Ext.form.FormPanel',
                 {
                     fieldLabel:'Branch Name',
                     id:'requestor_branch',
-                    name:'branchname'
+                    name:'requestor_branch'
                 },
                 {
                     xtype:'box',
@@ -156,7 +156,7 @@ Ext.create('Ext.form.FormPanel',
                     }
                 }
             ]
-        },
+        }
     ],
     buttonAlign:'center',
     buttons:

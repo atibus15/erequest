@@ -51,22 +51,9 @@ agent_profile =
 
 attachment =
 {
-    title: 'Attachment' ,
-    items:
-    [
-        {
-            items:
-            [
-                {xtype:'filefield', width:850, labelWidth:325,fieldLabel:'Upload Scan Copy of TIN ID/Form 1906', name:'file_tin_id'}
-            ]
-        },
-        {
-            items:
-            [
-                {xtype:'filefield', width:850, labelWidth:325,fieldLabel:'Upload Scan Copy of Agent Application Form', name:'agent_app_form'}
-            ]
-        }
-    ]
+    title: 'Attachment',
+    id  :'attachment',
+    items:[]
 };
 
 

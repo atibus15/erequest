@@ -61,6 +61,20 @@ class Loader
         }
     }
 
+    public function library($library_name)
+    {
+        $file = LIBRARY_DIR.$library_name.'.php';
+
+        if(file_exists($file))
+        {
+            include_once($file);
+        }
+        else
+        {
+            die('Error loading: library '.$file.' does not exist.');
+        }
+    }
+
     public function controller($controller_name)
     {
         $file = APPS_DIR."controller/".$controller_name.'.php';

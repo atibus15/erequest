@@ -3,9 +3,6 @@ if(!defined('ROOT_DIR'))exit('Direct access not allowed..');
 
 class User extends ActionController
 {
-    private $usermodel;
-
-    private $menumodel;
 
     private $username;
 
@@ -99,7 +96,9 @@ class User extends ActionController
 
                     $emp_badge_no = $user_account->BADGENO;
 
-                    $user_details = $this->usermodel->fetchEmployeeDetails($emp_badge_no);
+                    $this->employeemodel = $this->load->model('EmployeeModel');
+
+                    $user_details = $this->employeemodel->fetchEmployeeDetailsByBadgeNo($emp_badge_no);
 
                     $rolecodes = $this->usermodel->getArrayCompiledRoleCode($this->username);
 
@@ -131,9 +130,10 @@ class User extends ActionController
         $badge_no = userSession('badgeno');
         try
         {
+            $this->employeemodel = $this->load->model('EmployeeModel');
             $this->usermodel = $this->load->model('UserModel');
 
-            $user_details = $this->usermodel->fetchEmployeeDetails($badge_no);
+            $user_details = $this->employeemodel->fetchEmployeeDetails($badge_no);
 
             $rolecodes = $this->usermodel->getArrayCompiledRoleCode($this->username);
 

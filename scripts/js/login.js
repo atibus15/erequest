@@ -1,16 +1,16 @@
 $(document).ready(function(){
     $('#login-btn').click(function(){
-        doAjax();
+        authenticateUser();
     });
     $('#password').keydown(function (e){
     if(e.keyCode == 13){
-        doAjax();
+        authenticateUser();
     }
 })
 })
 
 
-function doAjax(){
+function authenticateUser(){
    var waitBox =  Ext.MessageBox.show({
           msg          : 'Connecting...',
           progressText : 'Verifying user account...',
@@ -20,7 +20,7 @@ function doAjax(){
    });
 
     Ext.Ajax.on('requestcomplete',function(conn,o,result){
-        waitBox.hide()
+        waitBox.hide();
     })
 
     Ext.Ajax.on('requestexception',function(conn,o,result){

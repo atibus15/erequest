@@ -53,7 +53,7 @@ Ext.onReady(function()
                 autoHeight  :true,
                 bodyStyle   :'background-color:transparent; padding:3px 0 3px 0;',
                 layout      :'column',
-                defaultType :'textfield',
+                defaultType :'mytextfield',
                 defaults    :
                 {
                     readOnly    :false,
@@ -277,7 +277,6 @@ Ext.onReady(function()
                         },
                         items:
                         [
-                            {html:'No.',            width:45},
                             {html:'QTY.',           width:45},
                             {html:'Description',    width:200},
                             {html:'Brand Name',     width:100},
@@ -291,7 +290,7 @@ Ext.onReady(function()
                         [
                             {
                                 xtype:'box',       
-                                width:550,  
+                                width:500,  
                                 html:'&nbsp;'
                             },
                             {
@@ -300,14 +299,14 @@ Ext.onReady(function()
                                 name:'pci_store'
                             },
                             {
-                                xtype:'textfield',
+                                xtype:'mytextfield',
                                 allowBlank:false, 
                                 width:100, 
                                 name:'store2_name',
                                 value:'Rusi' //clear me later
                             },
                             {
-                                xtype:'textfield',
+                                xtype:'mytextfield',
                                 allowBlank:false, 
                                 width:100, 
                                 name:'store3_name',
@@ -327,19 +326,19 @@ Ext.onReady(function()
                                 xtype :'textfield',
                                 allowBlank:false, 
                                 name:'request_number',
-                                readOnly:true,      
-                                width:45, 
+                                readOnly:true,  
+                                hidden:true,    
                                 value:idgen
                             },
                             {
-                                xtype :'textfield',
+                                xtype :'numberfield',
                                 allowBlank:false, 
                                 value:1,
                                 readOnly:true,
                                 name:'item_quantity',     
                                 width:45
                             },
-                            {
+                            {e.stopEvent();
                                 xtype :'combobox', 
                                 allowBlank:false, 
                                 name:'item_code',      
@@ -348,6 +347,15 @@ Ext.onReady(function()
                                 valueField:'code',
                                 displayField:'desc',
                                 autoScroll:true,
+                                listeners:{
+                                    change:function(cmp,val)
+                                    {
+                                        var last_request_date = getLastRequestDate(_request_code,val);
+
+                                        //set last request date value;
+                                        this.findParentByType('panel').getComponent(4).setValue(last_request_date); 
+                                    }
+                                },
                                 listConfig:{
                                     maxHeight:265
                                 }
@@ -371,32 +379,52 @@ Ext.onReady(function()
                                 maxValue:_today,
                                 editable:false, 
                                 readOnly:true,
-                                format:'m/d/Y',
-                                value:getLastRequestDate(_request_code)
+                                format:'m/d/Y'
                             },
                             {
-                                xtype :'numberfield',
+                                xtype :'textfield',
                                 allowBlank:false, 
                                 name:'pci_item_price', 
                                 id:'pci_item_price',
                                 width:100,
-                                value: 1524
+                                value:'0.00',
+                                listeners   :{
+                                    blur:function()
+                                    {
+                                        var formatted_value = Ext.util.Format.number(this.getValue(), '0,000.00');
+                                        this.setValue(formatted_value);
+                                    }
+                                }
                             },
                             {
-                                xtype :'numberfield',
+                                xtype :'textfield',
                                 allowBlank:false, 
                                 id:'store2_item_price',
                                 name:'store2_item_price', 
                                 width:100,
-                                value:8524
+                                value:'0.00',
+                                listeners   :{
+                                    blur:function()
+                                    {
+                                        var formatted_value = Ext.util.Format.number(this.getValue(), '0,000.00');
+                                        this.setValue(formatted_value);
+                                    }
+                                }
                             },
                             {
-                                xtype :'numberfield',
+                                xtype :'textfield',
                                 allowBlank:false, 
                                 id:'store3_item_price',
                                 name:'store3_item_price', 
                                 width:100,
-                                value:1245
+                                value:'0.00',
+                                listeners   :{
+                                    blur:function()
+                                    {
+                                        var formatted_value = Ext.util.Format.number(this.getValue(), '0,000.00');
+                                        this.setValue(formatted_value);
+                                    }
+                                }
                             }
                         ]
                     },
@@ -405,19 +433,30 @@ Ext.onReady(function()
                         items:
                         [
                             {
-                                xtype:'textarea',
-                                name:'remarks',
-                                fieldLabel:'Remarks',
-                                labelWidth:100,
-                                width: 870,
-                                height:50,
-                                emptyText:'Type your remarks here..',
-                                allowBlank:true
+                                xtype       :'textarea',
+                                name        :'remarks',
+                                fieldLabel  :'Remarks',
+                                labelWidth  :100,
+                                maxLength   :150,
+                                width       :820,
+                                height      :50,
+                                emptyText   :'Type your remarks here..',
+                                allowBlank  :true,
+                                enableKeyEvents:true,
+                                listeners   :{
+                                    keypress:function(f,e)
+                                    {
+                                        if((this.getValue().length >= this.maxLength) && e.getKey() != 8)
+                                        {
+                                            e.stopEvent();
+                                        }
+                                    }
+                                }
                             }
                         ]
                     },
                     {
-                        defaultType :'textfield',
+                        defaultType :'mytextfield',
                         padding:'30px 0 3px 0',
                         items:
                         [
@@ -431,7 +470,14 @@ Ext.onReady(function()
                             {
                                 name:'verifier_name',
                                 id:'verifier_name',
-                                emptyText:'Service Mechanic',
+                                emptyText:'Name',
+                                readOnly:true,
+                                width:200
+                            },
+                            {
+                                name:'verifier_position',
+                                id:'verifier_position',
+                                emptyText:'Position',
                                 readOnly:true,
                                 width:200
                             },
@@ -439,7 +485,8 @@ Ext.onReady(function()
                             {
                                 xtype: 'datefield',
                                 editable: false, 
-                                labelWidth:100,
+                                labelWidth:125,
+                                width   :250,
                                 fieldLabel:'Date Verified',
                                 name:'verified_date',  
                                 maxValue: _today,
@@ -448,7 +495,7 @@ Ext.onReady(function()
                         ]
                     },
                     {
-                        defaultType:'textfield',
+                        defaultType:'mytextfield',
                         items:
                         [
                             {
@@ -462,8 +509,26 @@ Ext.onReady(function()
                                 name:'recommend_name',
                                 id:'recommend_name',
                                 readOnly:true,
-                                emptyText:'Branch Manager',
+                                emptyText:'Name',
                                 width:200
+                            },
+                            {
+                                name:'recommend_position',
+                                id:'recommend_position',
+                                readOnly:true,
+                                emptyText:'Position',
+                                width:200
+                            },
+                            {xtype:'box',width:18,html:'&nbsp;'},
+                            {
+                                xtype: 'datefield',
+                                editable: false, 
+                                labelWidth:125,
+                                fieldLabel:'Date Recommended',
+                                name:'recommended_date',  
+                                maxValue: _today,
+                                value : _today,
+                                width:250
                             }
                         ]
                     }
@@ -473,37 +538,7 @@ Ext.onReady(function()
         buttonAlign:'center',
         buttons:
         [
-            {
-                text: 'Submit',
-                id :'submit-btn',
-                name:'submit',
-                iconCls:'submit-icon',
-                formBind:true,
-                handler:function()
-                {
-                    submitRequestForm();
-                }
-            },
-            {
-                text:'Clear',
-                id:'clear-btn',
-                name:'clear',
-                iconCls:'erase-icon',
-                handler:function()
-                {
-                    request_form.getForm().reset();
-                }
-            },
-            {
-                text:'Cancel',
-                id:'cancel-btn',
-                name:'cancel',
-                iconCls:'exit-icon',
-                handler:function()
-                {
-                    
-                }
-            }
+            submit_btn, clear_btn, cancel_btn
         ]
     });
 
@@ -513,9 +548,11 @@ Ext.onReady(function()
 
 
 var verifier_badgeno  = Ext.getCmp('verifier_badgeno'),
-verifier_name     = Ext.getCmp('verifier_name'),
-recommend_badgeno = Ext.getCmp('recommend_badgeno'),
-recommend_name = Ext.getCmp('recommend_name');
+verifier_name       = Ext.getCmp('verifier_name'),
+verifier_position   = Ext.getCmp('verifier_position'),
+recommend_badgeno   = Ext.getCmp('recommend_badgeno'),
+recommend_name      = Ext.getCmp('recommend_name'),
+recommend_position  = Ext.getCmp('recommend_position');
  
 
 verifier_badgeno.on('blur',function()
@@ -523,10 +560,11 @@ verifier_badgeno.on('blur',function()
     if(this.isDirty() && this.getValue())
     {
         this.resetOriginalValue();
-        var fullname = getEmpFullname(this.getValue());
-        if(fullname)
+        var emp_detail = getEmployeeDetails(this.getValue());
+        if(emp_detail)
         {
-            verifier_name.setValue(fullname);
+            verifier_name.setValue(emp_detail.data.NAME);
+            verifier_position.setValue(emp_detail.data.POSITIONDESC);
         }
         else
         {
@@ -542,10 +580,11 @@ recommend_badgeno.on('blur',function()
     if(this.isDirty() && this.getValue())
     {
         this.resetOriginalValue();
-        var fullname = getEmpFullname(this.getValue());
-        if(fullname)
+        var emp_detail = getEmployeeDetails(this.getValue());
+        if(emp_detail)
         {
-            recommend_name.setValue(fullname);
+            recommend_name.setValue(emp_detail.data.NAME);
+            recommend_position.setValue(emp_detail.data.POSITIONDESC);
         }
         else
         {
@@ -562,6 +601,10 @@ Ext.getCmp('make').on('collapse',function(){
     item_brand_cmp.setValue(this.getValue());
 });
 
+Ext.getCmp('submit-btn').on('click',function(){
+    submitRequestForm('fuelLubricant');
+});
+
 //########################## END LISTENERS ################################///
 
 
@@ -569,49 +612,3 @@ Ext.getCmp('make').on('collapse',function(){
 fillFormValue();
 
 });
-
-
-
-
-function submitRequestForm()
-{
-    var form = request_form.getForm();
-
-    var form_fields = form._fields;
-
-    var first_invalid_field = false;
-
-    form_fields.each(function(field){
-        if(!field.isValid())
-        {
-            first_invalid_field = field;
-            return false;
-        }
-    })
-
-    // console.log(first_invalid_field);
-    if(first_invalid_field)
-    {
-        first_invalid_field.focus(); 
-        return false;
-    }
-    
-
-    if(form.isValid())
-    {
-
-        form.submit({
-            url:'?_page=fuelLubricant&_action=sendRequest',
-            method:'POST',
-            waitMsg:'Sending request...',
-            success:function(form, action)
-            {
-                Ext.Msg.alert('e-Request', action.result.message,function(){window.location = '?_page=user&_action=homepage';});
-            },
-            failure:function(form, action)
-            {
-                Ext.Msg.alert('e-Request', action.result.errormsg);
-            }
-        });
-    }
-}

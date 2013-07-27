@@ -31,9 +31,6 @@
         <script src="./libraries/bootstrap/js/html5shiv.js"></script>
         <![endif]-->
         
-    <?php if(userSession('idnumber')) : ?>
-        <script type="text/javascript" src="./scripts/js/logout.js"></script>
-    <?php endif; ?>
     </body>
 
 </html>

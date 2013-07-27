@@ -8,18 +8,21 @@ class RequestModel extends Model
 
     private $request_details_arr;
 
+    private $request_item_arr;
+
     private $history_details_arr;
 
     public function __construct()
     {
         parent::__construct();
         $this->db = $this->load->database('FINANCEDB');
+        $this->db->setTrans(IBASE_DEFAULT);
     }
 
     public function insertHeader()
     {
         
-        $this->db->setTrans(IBASE_DEFAULT);
+        
 
         $query  =   "INSERT INTO EREQUEST
                             (BADGENO,REQUESTCODE,FILEDATE,LASTNAME,FIRSTNAME,MIDDLENAME,NAMESUFFIX,HIREDATE,
@@ -48,28 +51,77 @@ class RequestModel extends Model
 
 
     // Execute insertHeader first before executing this; 
-    public function insertFuelLubricantDetails()
+    public function insertDetails($request_code)
     {
-        $query  =   "INSERT INTO EREQFL
-                            (HEADERID,SUTYPE,MCMAKECODE,MCMODEL,MCPLATENO,MCENGINENO,MCCHASSISNO,ACQUIREDDATE,ODOMREADING,
-                            LASTPMSDATE,SERVINGSHOP,ITEMCODE,ITEMBRAND,LASTREQDATE,PRICEPCI,STORE1NAME,STORE1PRICE,STORE2NAME,
-                            STORE2PRICE,VERIFIEDBADGENO,VERIFIEDNAME,VERIFIEDDATE,RECOMBADGENO,RECOMNAME,REMARKS,CREATEDDATE,CREATEDBY)
-                    VALUES('{$this->current_request_id}',?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,CURRENT_TIMESTAMP,?)";
+        $query = "";
 
+        switch ($request_code) 
+        {
+            case 'ERQ_RM':
+                $query =    "INSERT INTO EREQRM
+                            (HEADERID, SUTYPE, MCMAKECODE, MCMODEL, MCPLATENO, MCENGINENO, MCCHASSISNO, ACQUIREDDATE, 
+                            ODOMREADING, LASTPMSDATE, SERVINGSHOP, STORE2NAME, STORE3NAME, VERIFIEDBADGENO, VERIFIEDNAME, VERIFIEDPOSITION, VERIFIEDDATE, 
+                            RECOMBADGENO, RECOMNAME, RECOMPOSITION, RECOMDATE, REMARKS, CREATEDDATE, CREATEDBY)
+                            VALUES('{$this->current_request_id}',?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,CURRENT_TIMESTAMP,?)";
+                break;
+
+            case 'ERQ_FL':
+                $query  =   "INSERT INTO EREQFL
+                            (HEADERID,SUTYPE,MCMAKECODE,MCMODEL,MCPLATENO,MCENGINENO,MCCHASSISNO,ACQUIREDDATE,ODOMREADING,
+                            LASTPMSDATE,SERVINGSHOP,ITEMCODE,ITEMBRAND,LASTREQDATE,PCIPRICE,STORE2NAME,STORE2PRICE,STORE3NAME,
+                            STORE3PRICE,VERIFIEDBADGENO,VERIFIEDNAME,VERIFIEDPOSITION,VERIFIEDDATE,RECOMBADGENO,RECOMNAME,RECOMPOSITION,RECOMDATE,REMARKS,CREATEDDATE,CREATEDBY)
+                            VALUES('{$this->current_request_id}',?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,CURRENT_TIMESTAMP,?)";
+                break;
+            case 'ERQ_PRE': // forwarded to ERQ_RES
+            case 'ERQ_RES':
+                $query =    "INSERT INTO EREQRES
+                            (HEADERID,EFFECTDATE,AGREEMENTNO,AGREEMENTNAME,REQTYPECODE,OLDTERM,OLDDUEDAY,OLDMA,
+                            CNCAPPROVERBADGENO,CNCAPPROVERNAME,CNCAPPROVERPOSITION,CNCAPPROVERDATE, REMARKS, CREATEDDATE, CREATEDBY)
+                            VALUES( '{$this->current_request_id}',?,?,?,?,?,?,?,?,?,?,?,?,CURRENT_TIMESTAMP, ?)";
+                break;
+        }
+        
         $this->db->prepare($query);
 
         $this->db->execute($this->request_details_arr);
     }
 
 
-    public function fetchLastRequestDate($request_code)
+    public function insertItem()
     {
-        $this->db->setTrans(IBASE_READ);
-        $query  =   "SELECT FIRST 1 FILEDATE FROM EREQUEST WHERE REQUESTCODE = ? ORDER BY EREQUESTID DESC";
+        $query =    "INSERT INTO EREQRMDTL
+                            (HEADERID,ITEMNO,ITEMCODE,ITEMQTY,ITEMBRAND,LASTREQDATE,PCIPRICE,STORE2PRICE,STORE3PRICE,CREATEDDATE,CREATEDBY)
+                    VALUES('{$this->current_request_id}',?,?,?,?,?,?,?,?,CURRENT_TIMESTAMP,?)";
 
         $this->db->prepare($query);
 
-        $this->db->execute($request_code);
+        $this->db->execute($this->request_item_arr);
+    }
+
+    public function insertRequirements($requirement_dtl=array())
+    {
+        
+        $query  =   "INSERT INTO EREQREQUIRE
+                            (HEADERID, STREQUIREID, FILENAME, CREATEDDATE, CREATEDBY)
+                    VALUES({$this->current_request_id},?,?,CURRENT_TIMESTAMP,?)";
+
+        $this->db->prepare($query);
+
+        $this->db->execute($requirement_dtl);
+    }
+
+    // use in FL AND RM only
+    public function fetchLastRequestDate($request_detail)
+    {
+        $this->db->setTrans(IBASE_READ);
+        $query  =   "SELECT FIRST 1 H.FILEDATE FROM EREQUEST H ";
+        $query  .=  ($request_detail[0]=='ERQ_FL') ? "INNER JOIN (SELECT HEADERID, ITEMCODE FROM EREQFL)D ON D.HEADERID = H.EREQUESTID " : " ";
+        $query  .=  ($request_detail[0]=='ERQ_RM') ? "INNER JOIN (SELECT HEADERID, ITEMCODE FROM EREQRMDTL)D ON D.HEADERID = H.EREQUESTID " : " ";
+        $query  .=  "WHERE H.REQUESTCODE = ? AND D.ITEMCODE=? ORDER BY EREQUESTID DESC";
+
+        $this->db->prepare($query);
+
+        $this->db->execute($request_detail);
 
         $request_arr = $this->db->fetchArray();
 
@@ -89,10 +141,12 @@ class RequestModel extends Model
         $this->db->commitTrans();
     }
 
+
     public function rollbackRequest()
     {
         $this->db->rollbackTrans();
     }
+
 
     public function setHeaderDetails($new_header_details_arr)
     {
@@ -105,6 +159,7 @@ class RequestModel extends Model
         return $this->header_details_arr;
     }
 
+
     public function setRequestDetails($new_request_details_arr)
     {
         $this->request_details_arr = $new_request_details_arr;
@@ -116,6 +171,20 @@ class RequestModel extends Model
         return $this->request_details_arr;
     }
 
+
+    public function setRequestItem($new_request_item_arr)
+    {
+        $this->request_item_arr = $new_request_item_arr; 
+        return $this;
+    }
+
+    public function getRequestItem()
+    {
+        return $this->request_items_arr;
+    }
+
+
+
     public function setHistoryDetails($new_history_details_arr)
     {
         $this->history_details_arr = $new_history_details_arr;
@@ -126,6 +195,7 @@ class RequestModel extends Model
     {  
         return $this->history_details_arr;
     }
+
 
     public function setCurrentRequestID($request_id)
     {

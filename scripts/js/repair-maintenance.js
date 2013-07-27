@@ -42,12 +42,13 @@ Ext.onReady(function()
                 autoHeight  :true,
                 bodyStyle   :'background-color:transparent; padding:3px 0 3px 0;',
                 layout      :'column',
-                defaultType :'textfield',
+                defaultType :'mytextfield',
                 defaults    :
                 {
                     readOnly    :false,
                     width       :300,
-                    labelWidth  :115
+                    labelWidth  :115,
+                    allowBlank  :false
                 }
             }
         },
@@ -118,7 +119,7 @@ Ext.onReady(function()
                                 readOnly:true,
                                 fieldLabel:'Date of Request', 
                                 name:'request_date', 
-                                value:Ext.Date.format(new Date(), 'm/d/Y')
+                                value:_today
                             }
                         ]
                     }
@@ -261,7 +262,7 @@ Ext.onReady(function()
                         defaultType:'box',
                         items:
                         [
-                            {html:'&nbsp;',width:650},
+                            {html:'&nbsp;',width:620},
                             {html:'<b>Canvassed Price</b>',width:150}
                         ]
                         
@@ -272,28 +273,29 @@ Ext.onReady(function()
                         [
                             {
                                 xtype       :'box',       
-                                width       :495,  
+                                width       :465,  
                                 html        :'&nbsp;'
                             },
                             {
-                                xtype       :'textfield',
-                                width       :125, 
+                                xtype       :'mytextfield',
+                                width       :135, 
                                 readOnly    :true,
                                 value       :'PCI', 
+                                fieldStyle  :'text-transform:"uppercase";',
                                 name        :'pci_store'
                             },
                             {
-                                xtype       :'textfield',
+                                xtype       :'mytextfield',
                                 allowBlank  :false, 
-                                width       :125, 
+                                width       :135, 
                                 name        :'store2_name',
                                 emptyText   :'Store Name',
                                 value       :'Rusi' //clear me later
                             },
                             {
-                                xtype       :'textfield',
+                                xtype       :'mytextfield',
                                 allowBlank  :false, 
-                                width       :125, 
+                                width       :135, 
                                 name        :'store3_name',
                                 emptyText   :'Store Name',
                                 value       :'Honda Market' //clear me later
@@ -309,17 +311,16 @@ Ext.onReady(function()
                         },
                         items:
                         [
-                            {html:'No.',            width:25},
                             {html:'QTY.',           width:45},
                             {html:'Description',    width:200},
                             {html:'Brand Name',     width:100},
                             {html:'Last Req. Date', width:100},
-                            {html:'Unit Price',     width:60},
-                            {html:'Total',          width:60},
-                            {html:'Unit Price',     width:60},
-                            {html:'Total',          width:60},
-                            {html:'Unit Price',     width:60},
-                            {html:'Total',          width:60}
+                            {html:'Unit Price',     width:65},
+                            {html:'Total',          width:65},
+                            {html:'Unit Price',     width:65},
+                            {html:'Total',          width:65},
+                            {html:'Unit Price',     width:65},
+                            {html:'Total',          width:65}
                         ]
                     },
 
@@ -334,16 +335,17 @@ Ext.onReady(function()
                             {
                                 xtype       :'textfield',
                                 name        :'item_number['+_item_number+']',
-                                readOnly    :true,      
+                                readOnly    :true,
+                                hidden      :true,      
                                 width       :25, 
                                 value       :_item_number
                             },
                             {
                                 xtype       :'numberfield',
                                 name        :'item_quantity['+_item_number+']',  
-                                value       :1,
+                                value       :0,
                                 maxValue    :2,
-                                minValue    :1,   
+                                minValue    :0,   
                                 width       :45,
                                 listeners   :{
                                     blur:function()
@@ -359,7 +361,7 @@ Ext.onReady(function()
                                 xtype       :'combobox', 
                                 name        :'item_code['+_item_number+']',      
                                 width       :200,
-                                store       :dropDownStore('EREQUEST','FL_ITEM'),
+                                store       :dropDownStore('EREQUEST','RM_ITEM'),
                                 valueField  :'code',
                                 displayField:'desc',
                                 triggerAction:'all',
@@ -368,6 +370,15 @@ Ext.onReady(function()
                                 listConfig  :
                                 {
                                     maxHeight:265
+                                },
+                                listeners:{
+                                    change:function(cmp,val)
+                                    {
+                                        var last_request_date = getLastRequestDate(_request_code,val);
+
+                                        //set last request date value;
+                                        this.findParentByType('panel').getComponent(4).setValue(last_request_date); 
+                                    }
                                 }
                             },
                             {
@@ -385,40 +396,34 @@ Ext.onReady(function()
                                 name        :'last_request_date['+_item_number+']', 
                                 width       :100, 
                                 maxValue    :_today,
-                                readOnly    :true,
-                                value       :getLastRequestDate(_request_code)
+                                readOnly    :true
                             },
                             {
-                                xtype       :'numberfield',
+                                xtype       :'textfield',
                                 name        :'pci_item_price['+_item_number+']', 
-                                emptyText   :'Unit Price',
+                                value       :'0.00',
+                                maskRe      :/[1234567890.]/,
                                 maxValue    :99999,
                                 minValue    :1,
-                                decimalPrecision:2,
-                                hideTrigger :true,
-                                keyNavEnabled:false,
-                                mouseWheelEnabled:false,
                                 fieldStyle  :'text-align:right;',
-                                width       :60,
+                                width       :65,
                                 listeners   :{
                                     blur:function()
                                     {
+                                        var formatted_value = Ext.util.Format.number(this.getValue(), '0,000.00');
+                                        this.setValue(formatted_value);
                                         calculateSubTotal(this,'PCI-UNITPRICE');
                                     }
                                 }
 
                             },
                             {
-                                xtype       :'numberfield',
+                                xtype       :'textfield',
                                 name        :'pci_item_sub_total['+_item_number+']', 
-                                emptyText   :'Total',
+                                value       :'0.00',
                                 readOnly    :true,
-                                decimalPrecision:2,
-                                hideTrigger :true,
-                                keyNavEnabled:false,
-                                mouseWheelEnabled:false,
-                                fieldStyle  :'text-align:right;',
-                                width       :60,
+                                fieldStyle  :'text-align:right;background-color:#99EBC2;background-image:none;',
+                                width       :65,
                                 listeners   :{
                                     change :function()
                                     {
@@ -429,33 +434,28 @@ Ext.onReady(function()
                             {
                                 xtype       :'textfield',
                                 name        :'store2_item_price['+_item_number+']', 
-                                emptyText   :'Unit Price',
+                                value       :'0.00',
                                 maxValue    :99999,
                                 minValue    :1,
-                                decimalPrecision:2,
-                                hideTrigger :true,
-                                keyNavEnabled:false,
-                                mouseWheelEnabled:false,
+                                maskRe      :/[1234567890.]/,
                                 fieldStyle  :'text-align:right;',
-                                width       :60,
+                                width       :65,
                                 listeners   :{
                                     blur:function()
                                     {
+                                        var formatted_value = Ext.util.Format.number(this.getValue(), '0,000.00');
+                                        this.setValue(formatted_value);
                                         calculateSubTotal(this,'STORE2-UNITPRICE');
                                     }
                                 }
                             },
                             {
-                                xtype       :'numberfield',
+                                xtype       :'textfield',
                                 name        :'store2_item_sub_total['+_item_number+']', 
-                                emptyText   :'Total',
+                                value       :'0.00',
                                 readOnly    :true,
-                                decimalPrecision:2,
-                                hideTrigger :true,
-                                keyNavEnabled:false,
-                                mouseWheelEnabled:false,
-                                fieldStyle  :'text-align:right;',
-                                width       :60,
+                                fieldStyle  :'text-align:right;background-color:#99EBC2;background-image:none;',
+                                width       :65,
                                 listeners   :{
                                     change:function()
                                     {
@@ -466,33 +466,28 @@ Ext.onReady(function()
                             {
                                 xtype       :'textfield',
                                 name        :'store3_item_price['+_item_number+']', 
-                                emptyText   :'Unit Price',
+                                value       :'0.00',
                                 maxValue    :99999,
+                                maskRe      :/[1234567890.]/,
                                 minValue    :1,
-                                decimalPrecision:2,
-                                hideTrigger :true,
-                                keyNavEnabled:false,
-                                mouseWheelEnabled:false,
                                 fieldStyle  :'text-align:right;',
-                                width       :60,
+                                width       :65,
                                 listeners   :{
                                     blur:function()
                                     {
+                                        var formatted_value = Ext.util.Format.number(this.getValue(), '0,000.00');
+                                        this.setValue(formatted_value);
                                         calculateSubTotal(this,'STORE3-UNITPRICE');
                                     }
                                 }
                             },
                             {
-                                xtype       :'numberfield',
+                                xtype       :'textfield',
                                 name        :'store3_item_sub_total['+_item_number+']', 
-                                emptyText   :'Total',
+                                value       :'0.00',
                                 readOnly    :true,
-                                decimalPrecision:2,
-                                hideTrigger :true,
-                                keyNavEnabled:false,
-                                mouseWheelEnabled:false,
-                                fieldStyle  :'text-align:right;',
-                                width       :60,
+                                fieldStyle  :'text-align:right;background-color:#99EBC2;background-image:none;',
+                                width       :65,
                                 listeners   :{
                                     change:function()
                                     {
@@ -522,32 +517,45 @@ Ext.onReady(function()
                             },
                             {
                                 xtype   :'box',
-                                width   :400,
+                                width   :440,
                                 style   :'text-align:right;',
-                                html    :'<b>TOTAL:</b>'
+                                html    :'<b>GRAND TOTAL:</b>'
                             },
                             {
-                                width   :125, 
+                                width   :65, 
                                 readOnly:true,
+                                forceFormat:true,
                                 name    :'pci_item_grand_total_price',
                                 id      :'pci_item_grand_total_price',
-                                fieldStyle  :'text-align:right;',
+                                fieldStyle  :'text-align:right;background-color:#99EBC2;background-image:none;',
                                 value   :'0.00'
                             },
                             {
-                                width   :125, 
+                                xtype:'box',
+                                width:65,
+                                html:'&nbsp;'
+                            },
+                            {
+                                width   :65, 
                                 readOnly:true,
+                                forceFormat:true,
                                 name    :'store2_item_grand_total_price',
                                 id      :'store2_item_grand_total_price',
-                                fieldStyle  :'text-align:right;',
+                                fieldStyle  :'text-align:right;background-color:#99EBC2;background-image:none;',
                                 value   :'0.00'
                             },
                             {
-                                width   :125, 
+                                xtype:'box',
+                                width:65,
+                                html:'&nbsp;'
+                            },
+                            {
+                                width   :65, 
                                 readOnly:true,
+                                forceFormat:true,
                                 name    :'store3_item_grand_total_price',
                                 id      :'store3_item_grand_total_price',
-                                fieldStyle  :'text-align:right;',
+                                fieldStyle  :'text-align:right;background-color:#99EBC2;background-image:none;',
                                 value   :'0.00'
                             }
                         ]
@@ -561,61 +569,98 @@ Ext.onReady(function()
                                 name        :'remarks',
                                 fieldLabel  :'Remarks',
                                 labelWidth  :100,
-                                width       :890,
+                                maxLength   :150,
+                                width       :895,
                                 height      :50,
                                 emptyText   :'Type your remarks here..',
-                                allowBlank  :true
+                                allowBlank  :true,
+                                enableKeyEvents:true,
+                                listeners   :{
+                                    keypress:function(f,e)
+                                    {
+                                        if((this.getValue().length >= this.maxLength) && e.getKey() != 8)
+                                        {
+                                            e.stopEvent();
+                                        }
+                                    }
+                                }
                             }
                         ]
                     },
                     {
-                        defaultType :'textfield',
-                        padding     :'30px 0 3px 0',
+                        defaultType :'mytextfield',
+                        padding:'30px 0 3px 0',
                         items:
                         [
                             {
-                                fieldLabel  :'Verified by', 
-                                name        :'verifier_badgeno', 
-                                id          :'verifier_badgeno',
-                                emptyText   :'Badge No.',
-                                width       :200
+                                fieldLabel:'Verified by', 
+                                name:'verifier_badgeno', 
+                                id:'verifier_badgeno',
+                                emptyText:'Badge No.',
+                                width:200
                             },
                             {
-                                name        :'verifier_name',
-                                id          :'verifier_name',
-                                emptyText   :'Service Mechanic',
-                                readOnly    :true,
-                                width       :200
+                                name:'verifier_name',
+                                id:'verifier_name',
+                                emptyText:'Name',
+                                readOnly:true,
+                                width:200
+                            },
+                            {
+                                name:'verifier_name',
+                                id:'verifier_position',
+                                emptyText:'Position',
+                                readOnly:true,
+                                width:200
                             },
                             {xtype:'box',width:18,html:'&nbsp;'},
                             {
-                                xtype       : 'datefield',
-                                editable    : false, 
-                                labelWidth  :100,
-                                fieldLabel  :'Date Verified',
-                                name        :'verified_date',  
-                                maxValue    : _today,
-                                value       : _today
+                                xtype: 'datefield',
+                                editable: false, 
+                                labelWidth:125,
+                                width   : 280,
+                                fieldLabel:'Date Verified',
+                                name:'verified_date',  
+                                maxValue: _today,
+                                value : _today
                             }
                         ]
                     },
                     {
-                        defaultType:'textfield',
+                        defaultType:'mytextfield',
                         items:
                         [
                             {
-                                fieldLabel  :'Recommended by', 
-                                id          :'recommend_badgeno',
-                                name        :'recommend_badgeno', 
-                                emptyText   :'Badge No.',
-                                width       :200
+                                fieldLabel:'Recommended by', 
+                                id:'recommend_badgeno',
+                                name:'recommend_badgeno', 
+                                emptyText:'Badge No.',
+                                width:200
                             },
                             {
-                                name        :'recommend_name',
-                                id          :'recommend_name',
-                                readOnly    :true,
-                                emptyText   :'Branch Manager',
-                                width       :200
+                                name:'recommend_name',
+                                id:'recommend_name',
+                                readOnly:true,
+                                emptyText:'Name',
+                                width:200
+                            },
+                            {
+                                name:'recommend_position',
+                                id:'recommend_position',
+                                readOnly:true,
+                                emptyText:'Position',
+                                width:200
+                            },
+                            {xtype:'box',width:18,html:'&nbsp;'},
+                            {
+                                xtype: 'datefield',
+                                editable: false, 
+                                labelWidth:125,
+                                fieldLabel:'Date Recommended',
+                                name:'recommended_date',  
+                                maxValue: _today,
+                                value : _today,
+                                width:280
                             }
                         ]
                     }
@@ -635,39 +680,7 @@ Ext.onReady(function()
         buttonAlign:'center',
         buttons:
         [
-            {
-                text    : 'Submit',
-                id      :'submit-btn',
-                name    :'submit',
-                iconCls :'submit-icon',
-                handler :function()
-                {
-                    request_form.getForm().submit({
-                        url:'test.php',
-                        method:'POST'
-                    })
-                }
-            },
-            {
-                text:'Clear',
-                id:'clear-btn',
-                name:'clear',
-                iconCls:'erase-icon',
-                handler:function()
-                {
-                    request_form.getForm().reset();
-                }
-            },
-            {
-                text:'Cancel',
-                id:'cancel-btn',
-                name:'cancel',
-                iconCls:'exit-icon',
-                handler:function()
-                {
-                    
-                }
-            }
+            submit_btn, clear_btn, cancel_btn
         ]
     });
 
@@ -678,10 +691,63 @@ Ext.onReady(function()
 var item_brand_cmp = Ext.getCmp('request_detail_panel').getComponent(3).getComponent(3);
 var su_maker    = Ext.getCmp('make');
 
+var verifier_badgeno  = Ext.getCmp('verifier_badgeno'),
+verifier_name       = Ext.getCmp('verifier_name'),
+verifier_position   = Ext.getCmp('verifier_position'),
+recommend_badgeno   = Ext.getCmp('recommend_badgeno'),
+recommend_name      = Ext.getCmp('recommend_name'),
+recommend_position  = Ext.getCmp('recommend_position');
+ 
+
+verifier_badgeno.on('blur',function()
+{
+    if(this.isDirty() && this.getValue())
+    {
+        this.resetOriginalValue();
+        var emp_detail = getEmployeeDetails(this.getValue());
+        if(emp_detail)
+        {
+            verifier_name.setValue(emp_detail.data.NAME);
+            verifier_position.setValue(emp_detail.data.POSITIONDESC);
+        }
+        else
+        {
+            verifier_name.setValue('');
+            verifier_position.setValue('');
+            this.focus();
+        }
+        
+    }
+});
+
+recommend_badgeno.on('blur',function()
+{
+    if(this.isDirty() && this.getValue())
+    {
+        this.resetOriginalValue();
+        var emp_detail = getEmployeeDetails(this.getValue());
+        if(emp_detail)
+        {
+            recommend_name.setValue(emp_detail.data.NAME);
+            recommend_position.setValue(emp_detail.data.POSITIONDESC);
+        }
+        else
+        {
+            recommend_name.setValue('');
+            recommend_position.setValue('');
+            this.focus();
+        }
+    }
+});
+
 su_maker.on('collapse',function(cmb){
     item_brand_cmp.store.load();
     item_brand_cmp.setValue(cmb.getValue());
-})
+});
+
+Ext.getCmp('submit-btn').on('click',function(){
+    submitRequestForm('repairMaintenance');
+});
 
 
 //######### END DECLARATION OF LISTENERS ##############///
@@ -720,7 +786,7 @@ function addRequestItem()
         pci_item_price_cmp.name     = 'pci_item_price['+_item_number+']';
         pci_item_sub_total_cmp.name = 'pci_item_sub_total['+_item_number+']';
         store2_item_price_cmp.name  = 'store2_item_price['+_item_number+']';
-        store3_item_sub_total_cmp.name='store3_item_sub_total['+_item_number+']';
+        store2_item_sub_total_cmp.name='store2_item_sub_total['+_item_number+']';
         store3_item_price_cmp.name  = 'store3_item_price['+_item_number+']';
         store3_item_sub_total_cmp.name='store3_item_sub_total['+_item_number+']';
 
@@ -733,7 +799,8 @@ function addRequestItem()
             xtype:'button',
             iconCls:'close-icon',
             tooltip:'Destroy request row.',
-            handler:function(){
+            handler:function()
+            {
                 this.findParentByType('panel').destroy();
                 _item_number--;
             }
@@ -762,10 +829,8 @@ function calculateSubTotal(current_row_cmp, column)
 {
     var current_row_panel   = current_row_cmp.findParentByType('panel');
     var qty                 = current_row_panel.getComponent(1).getValue();
-    var unit_price          = current_row_cmp.getValue();
-    if (unit_price > 0)
-    {
-        var sub_total           = eval(unit_price) * eval(qty);
+    var unit_price          = current_row_cmp.getValue() ? current_row_cmp.getValue().replace(/,/g,'') : 0;
+    var sub_total           = eval(unit_price) * eval(qty);
 
         switch(column)
         {
@@ -784,19 +849,22 @@ function calculateSubTotal(current_row_cmp, column)
                 return false;
         }
 
-        return sub_total_cmp.setValue(sub_total); 
-    }
+        var formatted_sub_total = Ext.util.Format.number(sub_total,'0,000.00');
+        return sub_total_cmp.setValue(formatted_sub_total); 
 }
+
+
 
 function calculateAllStoreItemSubTotals(quantity_cmp)
 {
     var current_row_panel       = quantity_cmp.findParentByType('panel'),
     quantity                    = parseInt(quantity_cmp.getValue()),
 
-    pci_item_unit_price         = eval(current_row_panel.getComponent(5).getValue()),
-    store2_item_unit_price      = eval(current_row_panel.getComponent(7).getValue()),
-    store3_item_unit_price      = eval(current_row_panel.getComponent(9).getValue()),
+    pci_item_unit_price         = eval(String(current_row_panel.getComponent(5).getValue()).replace(/,/g,'')),
+    store2_item_unit_price      = eval(String(current_row_panel.getComponent(7).getValue()).replace(/,/g,'')),
+    store3_item_unit_price      = eval(String(current_row_panel.getComponent(9).getValue()).replace(/,/g,'')),
 
+    formatted_value             = '0.00';
     pci_item_sub_total_cmp      = current_row_panel.getComponent(6),
     store2_item_sub_total_cmp   = current_row_panel.getComponent(8),
     store3_item_sub_total_cmp   = current_row_panel.getComponent(10),
@@ -806,22 +874,22 @@ function calculateAllStoreItemSubTotals(quantity_cmp)
     if(pci_item_unit_price)
     {
         item_sub_total = pci_item_unit_price * quantity;
-
-        pci_item_sub_total_cmp.setValue(item_sub_total);
+        formatted_value = Ext.util.Format.number(item_sub_total, '0,000.00');
+        pci_item_sub_total_cmp.setValue(formatted_value);
     }
     if(store2_item_unit_price)
     {
         item_sub_total = store2_item_unit_price * quantity;
-
-        store2_item_sub_total_cmp.setValue(item_sub_total);
+        formatted_value = Ext.util.Format.number(item_sub_total, '0,000.00');
+        store2_item_sub_total_cmp.setValue(formatted_value);
     }
     if(store3_item_unit_price)
     {
         item_sub_total = store3_item_unit_price * quantity;
-
-        store3_item_sub_total_cmp.setValue(item_sub_total);
+        formatted_value = Ext.util.Format.number(item_sub_total, '0,000.00');
+        store3_item_sub_total_cmp.setValue(formatted_value);
     }
-    return;
+
 }
 
 function calculateGrandTotal(store_key)
@@ -832,37 +900,40 @@ function calculateGrandTotal(store_key)
     store3_item_price_arr  = $("input[name*=store3_item_sub_total]"),
     items_grand_total_price = 0;
 
+    grand_total_cmp_handler = null;
+
     switch(store_key)
     {
         case 'PCI' : 
             $.each(pci_item_price_arr,function(){
-                items_grand_total_price += parseFloat($(this).val());
+                items_grand_total_price += parseFloat(String($(this).val()).replace(/,/g,''));
             });
 
-            Ext.getCmp('pci_item_grand_total_price').setValue(items_grand_total_price);
+            grand_total_cmp_handler = Ext.getCmp('pci_item_grand_total_price');
         break;
 
         case 'STORE2':
             $.each(store2_item_price_arr,function(){
-                items_grand_total_price += parseFloat($(this).val());
+                items_grand_total_price += parseFloat(String($(this).val()).replace(/,/g,''));
             });
 
-            Ext.getCmp('store2_item_grand_total_price').setValue(items_grand_total_price);
+            grand_total_cmp_handler = Ext.getCmp('store2_item_grand_total_price');
         break;
 
         case 'STORE3':
             $.each(store3_item_price_arr,function(){
-                items_grand_total_price += parseFloat($(this).val());
+                items_grand_total_price += parseFloat(String($(this).val()).replace(/,/g,''));
             });
 
-            Ext.getCmp('store3_item_grand_total_price').setValue(items_grand_total_price);
+            grand_total_cmp_handler = Ext.getCmp('store3_item_grand_total_price');
         break;
-
-        default:
-            return false;
     }
 
-    return;
+   if(grand_total_cmp_handler)
+   {
+        var formatted_value = Ext.util.Format.number(items_grand_total_price, '0,000.00');
+        grand_total_cmp_handler.setValue(formatted_value);
+    }
 }
 
 
@@ -872,7 +943,7 @@ function getFileRequirements()
 
     Ext.Ajax.on('requestcomplete',function(){wait_box.hide();});
     Ext.Ajax.on('requestexception',function(){wait_box.hide();})
-    
+
     Ext.Ajax.request({
         url:'?_page=lookUp&_action=getRequirements',
         method:'POST',
@@ -892,12 +963,13 @@ function getFileRequirements()
                 for(var i=0; i<req_len; i++)
                 {
                     var desc        = requirements[i].DESCRIPTION;
-                    var req_name    = requirements[i].STREQUIREDID;
+                    var req_name    = requirements[i].STREQUIREID;
                     var allow_blank = (requirements[i].ISREQUIRED == 1) ? false : true;
 
                     upload_panel.add({
                         fieldLabel  :desc, 
-                        name        :req_name, 
+                        name       :req_name,
+                        id        :req_name, 
                         allowBlank  :allow_blank
                     });
                 }
@@ -910,3 +982,5 @@ function getFileRequirements()
         }
     })
 }
+
+//Sea oil, 

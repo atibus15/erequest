@@ -38,8 +38,8 @@ Ext.create('Ext.form.FormPanel',
     		[
     			{
     				fieldLabel:'Branch Code',
-    				id:'branch-code',
-    				name:'branchcode'
+    				name:'requestor_branch_code', 
+                    id:"requestor_branch_code"
     			},
     			{
     				xtype:'box',
@@ -47,12 +47,11 @@ Ext.create('Ext.form.FormPanel',
     				html:'&nbsp;'
     			},
     			{
-    				fieldLabel:'Request Date',
-    				id:'req-date',
                     readOnly:true,
-    				name:'reqdate',
-    				value:Ext.Date.format(new Date(),'m/d/Y')
-    			}
+                    fieldLabel:'Date of Request', 
+                    name:'request_date', 
+                    value:_today
+                }
     		]
     	},
         {
@@ -60,7 +59,7 @@ Ext.create('Ext.form.FormPanel',
             [
                 {
                     fieldLabel:'Branch Name',
-                    id:'branch-name',
+                    id:'requestor_branch',
                     name:'branchname'
                 },
                 {
@@ -102,19 +101,32 @@ Ext.create('Ext.form.FormPanel',
             items:
             [
                 {
-                    fieldLabel:'Requested by',
-                    id:'request-by',
-                    name:'requestby'
+                    readOnly    :true,
+                    xtype       :'mytextfield',
+                    fieldLabel  :'Requested by',
+                    id          :'requestor_badge_no',
+                    name        :'requestor_badge_no', 
+                    emptyText   :'Badge No.',
+                    // labelWidth  :105,
+                    width       :200
                 },
                 {
-                    xtype:'box',
-                    width:100,
-                    html:'&nbsp;'
+                    readOnly    :true,
+                    xtype       :'mytextfield',
+                    name        :'requestor_name',
+                    id          :'requestor_name',
+                    readOnly    :true,
+                    emptyText   :'Name',
+                    width       :200
                 },
                 {
-                    fieldLabel:'Position',
-                    id:'req-position',
-                    name:'reqposition'
+                    readOnly    :true,
+                    xtype       :'mytextfield',
+                    name        :'requestor_position',
+                    id          :'requestor_position',
+                    readOnly    :true,
+                    emptyText   :'Position',
+                    width       :200
                 }
             ]
         },
@@ -122,11 +134,24 @@ Ext.create('Ext.form.FormPanel',
             items:
             [
                 {
-                    xtype:'textarea',
-                    fieldLabel:'Remarks',
-                    id:'remarks',
-                    width:700,
-                    name:'remarks'
+                    xtype       :'textarea',
+                    name        :'remarks',
+                    fieldLabel  :'Remarks',
+                    maxLength   :150,
+                    width       :700,
+                    height      :50,
+                    emptyText   :'Type your remarks here..',
+                    allowBlank  :true,
+                    enableKeyEvents:true,
+                    listeners   :{
+                        keypress:function(f,e)
+                        {
+                            if((this.getValue().length >= this.maxLength) && e.getKey() != 8)
+                            {
+                                e.stopEvent();
+                            }
+                        }
+                    }
                 }
             ]
         },
@@ -173,4 +198,8 @@ Ext.create('Ext.form.FormPanel',
 Ext.onReady(function()
 {
     req_details_form.render('request-form-container');
+
+    fillFormValue();
+    // setCmpValue('requestor_branch_code', branchcode);
+    // setCmpValue('requestor_branch', branch);
 });

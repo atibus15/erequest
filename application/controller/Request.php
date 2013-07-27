@@ -63,6 +63,7 @@ class Request extends ActionController
     {
         $this->checkUserPrivilege();
         $data['form_title'] = "Rescheduling";
+        $this->load->js('scripts/js/common-form-functions');
         $this->load->js('scripts/js/reschedule');
         $this->load->completeView('request/generic_view', $data);
     }
@@ -79,6 +80,7 @@ class Request extends ActionController
     {
         $this->checkUserPrivilege();
         $data['form_title'] = "Pre-termination";
+        $this->load->js('scripts/js/common-form-functions');
         $this->load->js('scripts/js/pre-termination');
         $this->load->completeView('request/generic_view', $data);
     }

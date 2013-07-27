@@ -43,15 +43,16 @@ class LookUp extends ActionController
 
     public function getLastRequestDate()
     {
-        $request_code = get_post('requestcode');
+        $request_code   = get_post('requestcode');
+        $item_code      = get_post('itemcode');
         
         try
         {
-            if(!$request_code) throw new RuntimeException("Request code is required.", 1);
+            if(!$request_code or $item_code) throw new RuntimeException("Request and Item code is required.", 1);
 
             $this->requestmodel = $this->load->model('RequestModel');
 
-            $last_request_date = $this->requestmodel->fetchLastRequestDate($request_code);
+            $last_request_date = $this->requestmodel->fetchLastRequestDate(array($request_code,$item_code));
 
             $this->ajax_result['success'] = true;
             $this->ajax_result['last_request_date'] = $last_request_date;
@@ -70,7 +71,7 @@ class LookUp extends ActionController
 
         try
         {
-            if(!$app_code and !$sub_code) throw new RuntimeException("App Code and Sub App. Code is required.", 1);
+            if(!$app_code or !$sub_code) throw new RuntimeException("App Code and Sub App. Code is required.", 1);
 
             $this->lookupmodel  = $this->load->model('LookUpModel');
 

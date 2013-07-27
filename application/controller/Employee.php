@@ -14,7 +14,7 @@ class Employee extends ActionController
     }
 
     // for ajax only;
-    public function getFullname()
+    public function getEmployeeDetails()
     {
         $badgeno = get_post('badgeno');
         try
@@ -26,14 +26,14 @@ class Employee extends ActionController
 
             $this->empmodel = $this->load->model('EmployeeModel');
 
-            $fullname = $this->empmodel->fetchFullnameByBadgeNo($badgeno);
-            if(!$fullname)
+            $emp_details = $this->empmodel->fetchEmployeeDetailsByBadgeNo($badgeno);
+            if(!$emp_details)
             {
                 runtimeException('Invalid Badge No.',1);
             }
             
             $this->ajax_result['success'] = true;
-            $this->ajax_result['fullname'] = trim($fullname[0]['NAME']);
+            $this->ajax_result['data'] = $emp_details;
         }
         catch(Exception $e)
         {

@@ -50,19 +50,25 @@ function dropDownStore(appcode, subappcode)
     });
 }
 
-function getEmpFullname(badge_no)
+function getEmployeeDetails(badge_no)
 {
-    var wait_box = Ext.Msg.wait('Getting name...','e-Request');
+    var wait_box = Ext.Msg.wait('Loading Employee Info...','e-Request');
 
-    Ext.Ajax.on('requestcomplete',function(){wait_box.hide();});
-    Ext.Ajax.on('requestexception',function(){wait_box.hide();});
 
     var request = $.ajax({
-        url:'?_page=employee&_action=getFullname',
+        url:'?_page=employee&_action=getEmployeeDetails',
         method:'post',
         async:false,
         data:{
             badgeno:badge_no
+        },
+        success:function()
+        {
+            wait_box.hide();
+        },
+        failure:function()
+        {
+            wait_box.hide();
         }
     });
 
@@ -74,22 +80,28 @@ function getEmpFullname(badge_no)
         return false;
     }
     
-    return response.fullname;
+    return response;
 }
 
-function getLastRequestDate(request_code)
+function getLastRequestDate(request_code,item_code)
 {
     var wait_box = Ext.Msg.wait('Getting last request date...','e-Request');
-
-    Ext.Ajax.on('requestcomplete',function(){wait_box.hide();});
-    Ext.Ajax.on('requestexception',function(){wait_box.hide();});
 
     var request = $.ajax({
         url:'?_page=lookUp&_action=getLastRequestDate',
         method:'post',
         async:false,
         data:{
-            requestcode : request_code
+            requestcode : request_code,
+            itemcode   : item_code
+        },
+        success:function()
+        {
+            wait_box.hide();
+        },
+        failure:function()
+        {
+            wait_box.hide();
         }
     });
 
@@ -108,10 +120,124 @@ function fillFormValue()
 {
 
     setCmpValue('requestor_branch_code', branchcode);
+    setCmpValue('requestor_branch', branch);
     setCmpValue('requestor_badge_no', badgeno);
     setCmpValue('requestor_name', fullname);
-    setCmpValue('requestor_branch', branch);
     setCmpValue('requestor_position', position_desc);
-
 }
 
+Ext.define('MY.custom.TextField',
+{
+    extend:'Ext.form.TextField',
+    alias:'widget.mytextfield',
+    initComponent:function()
+    {
+        Ext.apply(this,{
+            enableKeyEvents:true,
+            listeners:{
+                keyup:function()
+                {
+                    this.setValue(this.getValue().toUpperCase());
+                }
+            }
+        });
+        this.callParent(arguments);
+    }
+});
+
+
+
+function submitRequestForm(module_method)
+{
+    var form = request_form.getForm();
+
+    var form_fields = form._fields;
+
+    var first_invalid_field = false;
+
+    form_fields.each(function(field){
+        if(!field.isValid())
+        {
+            first_invalid_field = field;
+            return false;
+        }
+    })
+
+    // console.log(first_invalid_field);
+    if(first_invalid_field)
+    {
+        first_invalid_field.focus(); 
+        return false;
+    }
+    
+
+    if(form.isValid())
+    {
+
+        form.submit({
+            url:'?_page=RequestFile&_action='+module_method,
+            method:'POST',
+            waitMsg:'Sending request...',
+            success:function(form, action)
+            {
+                Ext.Msg.alert('e-Request', action.result.message,function(){window.location = '?_page=user&_action=homepage';});
+            },
+            failure:function(form, action)
+            {
+                Ext.Msg.alert('e-Request', action.result.errormsg);
+            }
+        });
+    }
+}
+
+var submit_btn = 
+{
+    text:'Submit',
+    id : 'submit-btn',
+    iconCls:'submit-icon'
+};
+
+var clear_btn =
+{
+    text:'Clear',
+    id:'clear_btn',
+    iconCls:'erase2-icon',
+    handler:function()
+    {
+        this.findParentByType('form').getForm().reset();
+    }
+};
+
+var cancel_btn =
+{
+    text:'Cancel',
+    id:'cancel_btn',
+    iconCls:'close-icon',
+    handler:function()
+    {
+        window.location = '?page=user&action=homepage';
+    }
+};
+
+var approve_btn =
+{
+    text: 'Approved',
+    id :'approve-btn',
+    name:'approve',
+    iconCls:'approve-icon'
+};
+
+var disapprove_btn =
+{
+    text: 'Disapproved',
+    name:'disapprove',
+    id :'disapprove_btn',
+    iconCls:'disapprove-icon'
+};
+var back_btn =
+{
+    text:'Back to List',
+    id:'back-btn',
+    name:'back',
+    iconCls:'back-icon'  
+};

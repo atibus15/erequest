@@ -72,12 +72,16 @@ class RequestModel extends Model
                             STORE3PRICE,VERIFIEDBADGENO,VERIFIEDNAME,VERIFIEDPOSITION,VERIFIEDDATE,RECOMBADGENO,RECOMNAME,RECOMPOSITION,RECOMDATE,REMARKS,CREATEDDATE,CREATEDBY)
                             VALUES('{$this->current_request_id}',?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,CURRENT_TIMESTAMP,?)";
                 break;
-            case 'ERQ_PRE': // forwarded to ERQ_RES
             case 'ERQ_RES':
                 $query =    "INSERT INTO EREQRES
                             (HEADERID,EFFECTDATE,AGREEMENTNO,AGREEMENTNAME,REQTYPECODE,OLDTERM,OLDDUEDAY,OLDMA,
                             CNCAPPROVERBADGENO,CNCAPPROVERNAME,CNCAPPROVERPOSITION,CNCAPPROVERDATE, REMARKS, CREATEDDATE, CREATEDBY)
                             VALUES( '{$this->current_request_id}',?,?,?,?,?,?,?,?,?,?,?,?,CURRENT_TIMESTAMP, ?)";
+                break;
+            case 'ERQ_PRE': 
+                $query  =   "INSERT INTO EREQPRE
+                            (HEADERID,EFFECTDATE,AGREEMENTNO,AGREEMENTNAME,REMARKS,CREATEDDATE,CREATEDBY)
+                            VALUES('{$this->current_request_id}',?,?,?,?,CURRENT_TIMESTAMP,?)";
                 break;
         }
         

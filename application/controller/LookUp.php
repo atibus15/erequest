@@ -48,7 +48,7 @@ class LookUp extends ActionController
         
         try
         {
-            if(!$request_code or $item_code) throw new RuntimeException("Request and Item code is required.", 1);
+            if(!$request_code or !$item_code) throw new RuntimeException("Request and Item code is required.", 1);
 
             $this->requestmodel = $this->load->model('RequestModel');
 

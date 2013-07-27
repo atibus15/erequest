@@ -6,7 +6,7 @@ Ext.require([
     'Ext.panel.*'
     ]);
 
-req_details_form =
+request_form =
 Ext.create('Ext.form.FormPanel',
 {
 	title 		:'REQUEST DETAILS',
@@ -24,11 +24,12 @@ Ext.create('Ext.form.FormPanel',
         autoHeight  :true,
         bodyStyle   :'background-color:transparent; padding:3px 0 3px 0;',
         layout      :'column',
-        defaultType :'textfield',
+        defaultType :'mytextfield',
         defaults    :
         {
             width       :300,
-            labelWidth  :115
+            labelWidth  :115,
+            allowBlank  :false
         }
     },
     items:
@@ -70,9 +71,10 @@ Ext.create('Ext.form.FormPanel',
                 {
                     xtype:'datefield',
                     fieldLabel:'Effective Date',
-                    id:'effect-date',
-                    name:'effectdate',
-                    minValue:Ext.Date.format(new Date(),'m/d/Y')
+                    id:'effective_date',
+                    editable:false,
+                    name:'effective_date',
+                    minValue:_today
                 }
             ]
         },
@@ -81,8 +83,8 @@ Ext.create('Ext.form.FormPanel',
             [
                 {
                     fieldLabel:'Agreement No.',
-                    id:'agree-no',
-                    name:'agree_no'
+                    id:'agreement_no',
+                    name:'agreement_no'
                 },
                 {
                     xtype:'box',
@@ -91,8 +93,8 @@ Ext.create('Ext.form.FormPanel',
                 },
                 {
                     fieldLabel:'Agreement Name',
-                    id:'agree-name',
-                    name:'agree_name'
+                    id:'agreement_name',
+                    name:'agreement_name'
                 }
             ]
         },
@@ -159,47 +161,17 @@ Ext.create('Ext.form.FormPanel',
     buttonAlign:'center',
     buttons:
     [
-        {
-            text: 'Submit',
-            id :'submit-btn',
-            name:'submit',
-            iconCls:'submit-icon',
-            handler:function()
-            {
-                req_details_form.getForm().submit({
-                    url:'test.php',
-                    method:'POST'
-                })
-            }
-        },
-        {
-            text:'Clear',
-            id:'clear-btn',
-            name:'clear',
-            iconCls:'erase-icon',
-            handler:function()
-            {
-                req_details_form.getForm().reset();
-            }
-        },
-        {
-            text:'Cancel',
-            id:'cancel-btn',
-            name:'cancel',
-            iconCls:'exit-icon',
-            handler:function()
-            {
-                
-            }
-        }
+        submit_btn, clear_btn, cancel_btn
     ]
 });
 
 Ext.onReady(function()
 {
-    req_details_form.render('request-form-container');
+    request_form.render('request-form-container');
 
     fillFormValue();
-    // setCmpValue('requestor_branch_code', branchcode);
-    // setCmpValue('requestor_branch', branch);
+
+    Ext.getCmp('submit-btn').on('click',function(){
+        submitRequestForm('preTermination');
+    });
 });

@@ -89,6 +89,11 @@ abstract class ActionController extends Controller{
         return $this->action;
     }
     
+    public function buildJson($params)
+    {
+       return json_encode($params);
+    }
+
     public function dispatchAction()
     {
         $method = $this->getAction();

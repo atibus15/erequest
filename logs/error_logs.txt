@@ -1,0 +1,11 @@
+07/29/2013 11:41:16 : --> 
+at /var/www/erequest/core/Database.php.. Line: 102
+07/29/2013 11:46:18 : --> 
+at /var/www/erequest/core/Database.php.. Line: 102
+07/29/2013 11:47:30 : --> validation error for column CURRPADLASTDATE, value "*** null ***" 
+at /var/www/erequest/core/Database.php.. Line: 102
+07/29/2013 12:02:20 : --> Error: Unable to create user directory, no permission to write file.
+at /var/www/erequest/libraries/Uploader.php.. Line: 64
+07/29/2013 14:55:57 : --> Error: Unable to create user directory, no permission to write file.
+at /var/www/erequest/libraries/Uploader.php.. Line: 64
+

@@ -1,6 +1,6 @@
 // Author : atibus
 // Date   : 07/11/2013
-
+//@system   :e-Request
 Ext.require([
     'Ext.form.*',
     'Ext.panel.*'
@@ -142,7 +142,6 @@ Ext.create('Ext.form.FormPanel',
                     maxLength   :150,
                     width       :700,
                     height      :50,
-                    emptyText   :'Type your remarks here..',
                     allowBlank  :true,
                     enableKeyEvents:true,
                     listeners   :{

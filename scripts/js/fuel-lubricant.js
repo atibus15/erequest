@@ -440,7 +440,7 @@ Ext.onReady(function()
                                 maxLength   :150,
                                 width       :820,
                                 height      :50,
-                                emptyText   :'Type your remarks here..',
+                                
                                 allowBlank  :true,
                                 enableKeyEvents:true,
                                 listeners   :{

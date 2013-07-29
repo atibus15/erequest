@@ -16,6 +16,10 @@ class Uploader
 
     private $filenames;
 
+    private $error_code;
+
+    private $error_msg;
+
     public function __construct()
     {
         ;
@@ -61,12 +65,14 @@ class Uploader
 
         if(!mkdir($upload_full_path))
         {
-            throw new RuntimeException("Error: Unable to create user directory, no permission to write file.", 1);
+            $this->error_code = 1;
+            $this->error_msg = "Unable to create user directory, please contact your system administrator."; 
+            return false;
         }
 
         $this->upload_full_path = $upload_full_path;
 
-        return $this;
+        return true;
     }
 
     
@@ -85,9 +91,13 @@ class Uploader
 
     public function saveAttachement()
     {
-        $this->validate();
+        $valid = $this->validate();
 
-        $this->createNewDirectory();
+        if(!$valid)return false;
+        
+        $new_dir = $this->createNewDirectory();
+        if(!$new_dir)return false;
+
 
         $file_len = count($this->files);
 
@@ -104,7 +114,9 @@ class Uploader
 
             if(!move_uploaded_file($tempname, $new_file_path))
             {
-                throw new RuntimeException("Error : Something went wrong while uploading files.");
+                $this->error_code = 2;
+                $this->error_msg  = "Unable to save uploaded file(s), please contact your system administrator."; 
+                return false;
             }
         }
         return true;        
@@ -131,12 +143,27 @@ class Uploader
             //validate file ext and size;
             if(!in_array(strtolower($ext),$valid_formats))
             {
-                throw new Exception($file['description'].' is invalid.', 1);
+                $this->error_code=3;
+                $this->error_msg = $file['description'].' attachment is invalid.'; 
+                return false;
             }
             if($size > (1024 * 1024) * 2) // system standard upload filesize..
             {
-                throw new Exception($file['description'].' filesize is larger than 2MB.', 1);
+                $this->error_code = 4;
+                $this->error_msg = $file['description'].' attachment filesize is larger than 2MB.'; 
+                return false;
             }
         }
+        return true;
+    }
+
+    public function getErrorCode()
+    {
+        return $this->error_code;
+    }
+
+    public function getMessage()
+    {
+        return $this->error_msg;
     }
 }

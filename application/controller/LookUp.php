@@ -22,7 +22,7 @@ class LookUp extends ActionController
             if(!$app_code or !$sub_code)
             {
                 $this->ajax_result['errormsg'] = "Application and Sub-Application code is required.";
-                exit(json_encode($this->ajax_result));
+                exit($this->buildJson( $this->ajax_result ));
             }
                 
 
@@ -47,7 +47,7 @@ class LookUp extends ActionController
             Logger::write($e);
         }
 
-        echo json_encode($this->ajax_result);
+        echo $this->buildJson( $this->ajax_result );
     }
 
 
@@ -62,7 +62,7 @@ class LookUp extends ActionController
             if(!$request_code or !$item_code) 
             {
                 $this->ajax_result['errormsg'] = "Request and Item code is required.";
-                exit(json_encode($this->ajax_result)); 
+                exit( $this->buildJson( $this->ajax_result ) ); 
             }
 
             $this->requestmodel = $this->load->model('RequestModel');
@@ -78,7 +78,7 @@ class LookUp extends ActionController
             $this->load->helper('Logger');
             Logger::write($e);
         }
-        echo json_encode($this->ajax_result);
+        echo $this->buildJson( $this->ajax_result );
     }
 
     public function execGetRequirements()
@@ -91,7 +91,7 @@ class LookUp extends ActionController
             if(!$app_code or !$sub_code)
             {
                 $this->ajax_result['errormsg'] = "App Code and Sub App. Code is required.";
-                exit(json_encode($this->ajax_result));
+                exit($this->buildJson( $this->ajax_result ));
             }
 
             $this->lookupmodel  = $this->load->model('LookUpModel');
@@ -107,6 +107,6 @@ class LookUp extends ActionController
             $this->load->helper('Logger');
             Logger::write($e);
         }
-        echo json_encode($this->ajax_result);
+        echo $this->buildJson( $this->ajax_result );
     }
 }

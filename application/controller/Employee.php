@@ -22,7 +22,7 @@ class Employee extends ActionController
             if(!$badgeno)
             {
                 $this->ajax_result['errormsg'] = "Badge No. is required.";
-                exit(json_encode($this->ajax_result));
+                exit($this->buildJson( $this->ajax_result ));
             }
 
             $this->empmodel = $this->load->model('EmployeeModel');
@@ -43,6 +43,6 @@ class Employee extends ActionController
             Logger::write($e);
         }
 
-        echo json_encode($this->ajax_result);
+        echo $this->buildJson( $this->ajax_result );
     }
 }

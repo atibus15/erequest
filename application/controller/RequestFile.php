@@ -49,7 +49,7 @@ class RequestFile extends ActionController
                 if(!$value and $key != 6)
                 {
                     $this->ajax_result['errormsg'] = $generic_error_msg;
-                    exit(json_encode($this->ajax_result));
+                    exit($this->buildJson( $this->ajax_result ));
                 } 
             }
         }
@@ -61,7 +61,7 @@ class RequestFile extends ActionController
                 if(!$value and $key != 'remarks')
                 {
                     $this->ajax_result['errormsg'] = $generic_error_msg;
-                    exit(json_encode($this->ajax_result));
+                    exit($this->buildJson( $this->ajax_result ));
                 } 
             }
         }
@@ -76,7 +76,7 @@ class RequestFile extends ActionController
                     if(!$item[$i])
                     {
                         $this->ajax_result['errormsg'] = $generic_error_msg;
-                        exit(json_encode($this->ajax_result));
+                        exit($this->buildJson( $this->ajax_result ));
                     }
                 }
             }
@@ -120,7 +120,7 @@ class RequestFile extends ActionController
             Logger::write($e);
         }
 
-        echo json_encode($this->ajax_result);
+        echo $this->buildJson( $this->ajax_result );
     }
 
     public function execRepairMaintenance()
@@ -166,7 +166,7 @@ class RequestFile extends ActionController
             Logger::write($e);
         }
 
-        echo json_encode($this->ajax_result);
+        echo $this->buildJson( $this->ajax_result );
     }
 
     public function execReschedule()
@@ -206,7 +206,7 @@ class RequestFile extends ActionController
             Logger::write($e);
         }
 
-        echo json_encode($this->ajax_result);       
+        echo $this->buildJson( $this->ajax_result );     
     }
 
     public function execPreTermination()
@@ -244,7 +244,7 @@ class RequestFile extends ActionController
             Logger::write($e);
         }
 
-        echo json_encode($this->ajax_result);   
+        echo $this->buildJson( $this->ajax_result ); 
     }
 
     public function execDocument()
@@ -282,7 +282,7 @@ class RequestFile extends ActionController
             Logger::write($e);
         }
 
-        echo json_encode($this->ajax_result); 
+        echo $this->buildJson( $this->ajax_result );
     }
 
 
@@ -328,7 +328,47 @@ class RequestFile extends ActionController
             Logger::write($e);
         }
 
-        echo json_encode($this->ajax_result);
+        echo $this->buildJson( $this->ajax_result );
+    }
+
+    public function execNewSalesAgent()
+    {
+        try
+        {   
+
+            $this->header_details     = $this->collectHeaderDetails('ERQ_SA');
+            $this->request_details    = $this->collectSalesAgentDtls();
+            
+            $this->validateData();
+
+            $this->requestmodel->setHeaderDetails( $this->header_details );
+            $this->requestmodel->setRequestDetails( $this->request_details );
+
+            $this->requestmodel->insertHeader();
+            $this->requestmodel->insertDetails('ERQ_SA');
+
+            $current_request_id = $this->requestmodel->getCurrentRequestID();
+
+            $this->requestmodel->setHistoryDetails( array( $current_request_id,1,'',get_post('remarks'),userSession('userid') ) );
+            $this->requestmodel->insertHistory();
+
+            $this->uploadRequirements('ERQ_SA', $current_request_id);
+
+            $this->requestmodel->commitRequest();
+
+            $this->ajax_result['success'] = true;
+            $this->ajax_result['message'] = $this->success_msg;
+
+        }
+        catch(Exception $e)
+        {
+            $this->requestmodel->rollbackRequest();
+            $this->ajax_result['errormsg'] = "System error. Request Terminated.";
+            $this->load->helper('Logger');
+            Logger::write($e);
+        }
+
+        echo $this->buildJson( $this->ajax_result );
     }
 
 
@@ -350,7 +390,7 @@ class RequestFile extends ActionController
                 // rollback db transaction and exit process;
                 $this->requestmodel->rollbackRequest();
                 $this->ajax_result['errormsg'] = $req->DESCRIPTION." is required.";
-                exit($this->ajax_result);
+                exit($this->buildJson( $this->ajax_result ));
             }
 
             $files[] = array('id'=>$req['STREQUIREID'],'description'=>$req['DESCRIPTION']);
@@ -363,7 +403,16 @@ class RequestFile extends ActionController
         $uploader->setFiles( $files );
         $uploader->setAppCode( $app_code );
         $uploader->setNewDirectory( $new_dir );
-        $uploader->saveAttachement();
+        $uploaded = $uploader->saveAttachement();
+        
+        if(!$uploaded)
+        {
+            $this->requestmodel->rollbackRequest();
+            
+            $this->ajax_result['errormsg'] = $uploader->getMessage();
+
+            exit( $this->buildJson($this->ajax_result) );
+        }
 
         $uploaded_files = $uploader->getFiles();
 
@@ -596,6 +645,18 @@ class RequestFile extends ActionController
             post('engine_no'),
             post('document_type'),
             post('purpose'),
+            post('remarks'),
+            userSession('userid')
+        );
+    }
+
+    private function collectSalesAgentDtls()
+    {
+        return array(
+            post('agent_lastname'),
+            post('agent_firstname'),
+            post('agent_middlename'),
+            post('agent_tin'),
             post('remarks'),
             userSession('userid')
         );

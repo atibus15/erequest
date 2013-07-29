@@ -152,7 +152,6 @@ Ext.create('Ext.form.FormPanel',
                     maxLength   :150,
                     width       :700,
                     height      :50,
-                    emptyText   :'Type your remarks here..',
                     allowBlank  :true,
                     enableKeyEvents:true,
                     listeners   :{

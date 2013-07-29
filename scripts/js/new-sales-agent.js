@@ -1,3 +1,7 @@
+//@author   :atibus
+//@date     :07/29/2013
+//@system   :e-Request
+
 request_header = 
 {
     title: 'Request Details',
@@ -6,11 +10,11 @@ request_header =
         {
             items:
             [
-                {xtype:'displayfield',width:300, fieldLabel:'Branch Code', name:'branchcode', value:'414'},
+                {xtype:'textfield',width:300, fieldLabel:'Branch Code', readOnly:true, name:'requestor_branch_code', id:'requestor_branch_code'},
                 {xtype:'box',width:35,html:'&nbsp;'},
-                {xtype:'displayfield',labelWidth: 100,fieldLabel:'Branch Name', name:'branchdesc', value:'UCFC Head Office'},
+                {xtype:'textfield',labelWidth: 100,fieldLabel:'Branch Name', readOnly:true, name:'requestor_branch', id:'requestor_branch'},
                 {xtype:'box',width:35,html:'&nbsp;'},
-                {xtype:'displayfield',labelWidth: 100,fieldLabel:'Request Date', name:'req_date', value:Ext.Date.format(new Date(), 'm/d/Y')}
+                {xtype:'textfield',labelWidth: 100,fieldLabel:'Request Date', readOnly:true, name:'request_date', id:'request_date', value:_today}
             ]
         }
     ]
@@ -24,25 +28,74 @@ agent_profile =
         {
             items:
             [
-                {fieldLabel:'Last Name', width:300, name:'lastname'},
+                {xtype:'mytextfield',fieldLabel:'Last Name', width:300, name:'agent_lastname'},
                 {xtype:'box',width:35,html:'&nbsp;'},
-                {fieldLabel:'First Name',labelWidth: 100, name:'firstname'},
+                {xtype:'mytextfield',fieldLabel:'First Name',labelWidth: 100, name:'agent_firstname'},
                 {xtype:'box',width:35,html:'&nbsp;'},
-                {fieldLabel:'Middle Name',labelWidth: 100, name:'middlename'}
+                {xtype:'mytextfield',fieldLabel:'Middle Name',labelWidth: 100, name:'agent_middlename'}
             ]
         },
         {
             items:
             [
-                {fieldLabel:'Tax Identification No.',width:300, name:'tin'}
+                {xtype:'mytextfield',fieldLabel:'Tax Identification No.',width:300, name:'agent_tin', maskRe:/[0123456789]/}
+            ]
+        },
+        {
+            padding:'15px 0 15px 0',
+            items:
+            [
+                {
+                    xtype       :'textarea',
+                    name        :'remarks',
+                    fieldLabel  :'Remarks',
+                    maxLength   :150,
+                    width       :923,
+                    height      :50,
+                    allowBlank  :true,
+                    enableKeyEvents:true,
+                    listeners   :{
+                        keypress:function(f,e)
+                        {
+                            if((this.getValue().length >= this.maxLength) && e.getKey() != 8)
+                            {
+                                e.stopEvent();
+                            }
+                        }
+                    }
+                }
             ]
         },
         {
             items:
             [
-                {readOnly:true,fieldLabel:'Requested by',width:300,  name:'req_by', value:'Melchor Isidro'},
-                {xtype:'box',width:35,html:'&nbsp;'},
-                {readOnly:true,fieldLabel:'Position',labelWidth: 100, name:'req_position', value:'SA/QA Manager'}
+                {
+                    readOnly    :true,
+                    xtype       :'mytextfield',
+                    fieldLabel  :'Requested by',
+                    id          :'requestor_badge_no',
+                    name        :'requestor_badge_no', 
+                    emptyText   :'Badge No.',
+                    width       :200
+                },
+                {
+                    readOnly    :true,
+                    xtype       :'mytextfield',
+                    name        :'requestor_name',
+                    id          :'requestor_name',
+                    readOnly    :true,
+                    emptyText   :'Name',
+                    width       :200
+                },
+                {
+                    readOnly    :true,
+                    xtype       :'mytextfield',
+                    name        :'requestor_position',
+                    id          :'requestor_position',
+                    readOnly    :true,
+                    emptyText   :'Position',
+                    width       :200
+                }
             ]
         }
     ]
@@ -72,7 +125,7 @@ Ext.onReady(function(){
     {
         submitRequestForm('newSalesAgent');
     });
-
+    fillFormValue();
     getFileRequirements();
 });
 

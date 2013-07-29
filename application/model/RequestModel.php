@@ -86,10 +86,12 @@ class RequestModel extends Model
                             VALUES('{$current_id}',?,?,?,?,?,?,?,CURRENT_TIMESTAMP,?)";
                 break;
             case 'ERQ_FRM': 
-                $query  =   "INSERT INTO EREQFRM
-                            (HEADERID,REMARKS,CREATEDDATE,CREATEDBY)
-                            VALUES('{$current_id}',?,CURRENT_TIMESTAMP,?)";
+                $query  =   "INSERT INTO EREQFRM(HEADERID,REMARKS,CREATEDDATE,CREATEDBY) VALUES('{$current_id}',?,CURRENT_TIMESTAMP,?)";
                 break;
+
+            case 'ERQ_SA':
+                $query  =   "INSERT INTO EREQSA(HEADERID,AGENTLNAME,AGENTFNAME,AGENTMNAME,AGENTTIN,REMARKS,CREATEDDATE,CREATEDBY)
+                            VALUES('{$current_id}',?,?,?,?,?,CURRENT_TIMESTAMP,?)";
         }
         
         $this->db->prepare($query);
@@ -101,6 +103,7 @@ class RequestModel extends Model
     public function insertItem($request_code)
     {
         $current_id = $this->current_request_id;
+
         switch ($request_code) 
         {
             case 'ERQ_RM':

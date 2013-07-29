@@ -37,6 +37,7 @@ Ext.define('Request.form.Panel', {
                     defaults    :
                     {
                         readOnly    :false,
+                        allowBlank  :false,
                         width       :275,
                         labelWidth  :125
                     }

@@ -23,7 +23,10 @@ abstract class Controller{
     public function forward($page,$action)
     {
         $class = ucfirst($page);
+        $exec_action = 'exec'.ucfirst($action);
+
         $file = APPS_DIR . "controller/" . $class . ".php";
+
         if(!is_file($file))
         {
             exit("Controller - Page not found");
@@ -35,7 +38,7 @@ abstract class Controller{
 
         $controller->setName($page);
 
-        $controller->setAction($action);
+        $controller->setAction($exec_action);
         
         $controller->dispatchAction();
     }

@@ -7,7 +7,7 @@ class ErrorPage extends ActionController
         parent::__construct();
     }
 
-    public function forbidden()
+    public function execForbidden()
     {
         $this->load->view('error/forbidden');
     }

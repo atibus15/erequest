@@ -14,7 +14,7 @@ class Employee extends ActionController
     }
 
     // for ajax only;
-    public function getEmployeeDetails()
+    public function execGetEmployeeDetails()
     {
         $badgeno = get_post('badgeno');
         try

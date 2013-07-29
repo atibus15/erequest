@@ -88,21 +88,15 @@ abstract class ActionController extends Controller{
     {
         return $this->action;
     }
-
-    /*
-     * @param $action: the name of the method to be executed.
-     * : Executes the proper method stated as
-     * $this->$actionMethod();
-     * and passed the $action variable as the name of the view page.
-     */
+    
     public function dispatchAction()
     {
-        $actionMethod = $this->getAction();
+        $method = $this->getAction();
 
-        if(!method_exists($this, $actionMethod)){
+        if(!method_exists($this, $method)){
             exit("Page not found!");
         }
-        $this->$actionMethod();
+        $this->$method();
     }
 }
 ?>

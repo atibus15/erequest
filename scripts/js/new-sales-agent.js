@@ -52,7 +52,12 @@ agent_profile =
 attachment =
 {
     title: 'Attachment',
-    id  :'attachment',
+    id  :'upload_panel',
+    defaultType:'filefield',
+    defaults:{
+        width:820,
+        labelWidth:300,
+    },
     items:[]
 };
 
@@ -62,4 +67,58 @@ Ext.onReady(function(){
     request_form.add([request_header,agent_profile,attachment]);
     request_form.down('toolbar').add(submit_btn, clear_btn, cancel_btn);
     request_form.render('request-form-container');
-})
+
+    request_form.down('toolbar').getComponent(0).on('click',function()
+    {
+        submitRequestForm('newSalesAgent');
+    });
+
+    getFileRequirements();
+});
+
+
+function getFileRequirements()
+{
+    var wait_box = Ext.Msg.wait('Loading requirements...','e-Request');
+
+    Ext.Ajax.on('requestcomplete',function(){wait_box.hide();});
+    Ext.Ajax.on('requestexception',function(){wait_box.hide();})
+
+    Ext.Ajax.request({
+        url:'?_page=lookUp&_action=getRequirements',
+        method:'POST',
+        params:{
+            appcode:'EREQUEST',
+            subcode:'SA'
+        },
+        callback:function(success, opt, result)
+        {
+            var response = Ext.JSON.decode(result.responseText);
+
+            if(response.success)
+            {
+                var upload_panel = Ext.getCmp('upload_panel');
+                var requirements = response.data;
+                var req_len      = requirements.length;
+                for(var i=0; i<req_len; i++)
+                {
+                    var desc        = requirements[i].DESCRIPTION;
+                    var req_name    = requirements[i].STREQUIREID;
+                    var allow_blank = (requirements[i].ISREQUIRED == 1) ? false : true;
+
+                    upload_panel.add({
+                        fieldLabel  :desc, 
+                        name       :req_name,
+                        id        :req_name, 
+                        allowBlank  :allow_blank
+                    });
+                }
+                
+            }
+            else
+            {
+                messageBox(response.errormsg,Ext.getBody(),Ext.MessageBox.WARNING);
+            }
+        }
+    })
+}

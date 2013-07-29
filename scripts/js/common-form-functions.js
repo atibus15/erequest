@@ -43,7 +43,7 @@ function dropDownStore(appcode, subappcode)
         proxy :
         {
             type:'ajax',
-            url:'?_page=lookUp&_action=execGetGenDtl&appcode='+appcode+'&subappcode='+subappcode,
+            url:'?_page=lookUp&_action=getGenDtl&appcode='+appcode+'&subappcode='+subappcode,
             reader:{root:'data'}
         },
         autoLoad:false
@@ -166,7 +166,8 @@ function submitRequestForm(module_method)
     // console.log(first_invalid_field);
     if(first_invalid_field)
     {
-        first_invalid_field.focus(); 
+        first_invalid_field.focus();
+        // first_invalid_field.
         return false;
     }
     

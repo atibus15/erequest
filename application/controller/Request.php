@@ -33,7 +33,7 @@ class Request extends ActionController
     {
         $user_module = unserialize(userSession('serialized_user_module'));
 
-        $request_module = $this->getName().$this->getAction();
+        $request_module = $this->getName().get_post('_action');
 
         if(!in_array($request_module, $user_module))
         {
@@ -41,7 +41,7 @@ class Request extends ActionController
         }
     }
 
-    public function fuelLubricant()
+    public function execFuelLubricant()
     {
         $this->checkUserPrivilege();
         $data['form_title'] = "Fuel & Lubricant";
@@ -50,7 +50,7 @@ class Request extends ActionController
         $this->load->completeView('request/generic_view', $data);
     }
 
-    public function maintenance()
+    public function execMaintenance()
     {  
         $this->checkUserPrivilege();
         $data['form_title'] = "Repair & Maintenance";
@@ -59,7 +59,7 @@ class Request extends ActionController
         $this->load->completeView('request/generic_view', $data);
     }
 
-    public function reSchedule()
+    public function execReschedule()
     {
         $this->checkUserPrivilege();
         $data['form_title'] = "Rescheduling";
@@ -68,7 +68,7 @@ class Request extends ActionController
         $this->load->completeView('request/generic_view', $data);
     }
 
-    public function document()
+    public function execDocument()
     {
         $this->checkUserPrivilege();
         $data['form_title'] = "Document Requisition";
@@ -77,7 +77,7 @@ class Request extends ActionController
         $this->load->completeView('request/generic_view', $data);
     }
 
-    public function preTermination()
+    public function execPreTermination()
     {
         $this->checkUserPrivilege();
         $data['form_title'] = "Pre-termination";
@@ -86,7 +86,7 @@ class Request extends ActionController
         $this->load->completeView('request/generic_view', $data);
     }
 
-    public function newSalesAgent()
+    public function execNewSalesAgent()
     {
         $this->checkUserPrivilege();
         $data['form_title'] = "New Sales Agent";
@@ -96,7 +96,7 @@ class Request extends ActionController
         $this->load->completeView('request/generic_view',$data);
     }
 
-    public function accountableForms()
+    public function execAccountableForms()
     {
         $this->checkUserPrivilege();
         $data['form_title'] = "Accountable Forms";
@@ -106,7 +106,7 @@ class Request extends ActionController
         $this->load->completeView('request/generic_view',$data);
     }
 
-    public function processing()
+    public function execProcessing()
     {
         $this->checkUserPrivilege();
         $data['form_title'] = "Action Screen";

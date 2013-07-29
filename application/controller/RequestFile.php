@@ -85,7 +85,7 @@ class RequestFile extends ActionController
         return;
     }
 
-    public function fuelLubricant()
+    public function execFuelLubricant()
     {
         try
         {   
@@ -123,7 +123,7 @@ class RequestFile extends ActionController
         echo json_encode($this->ajax_result);
     }
 
-    public function repairMaintenance()
+    public function execRepairMaintenance()
     {
         try
         {   
@@ -169,7 +169,7 @@ class RequestFile extends ActionController
         echo json_encode($this->ajax_result);
     }
 
-    public function reschedule()
+    public function execReschedule()
     {
         try
         {   
@@ -209,7 +209,7 @@ class RequestFile extends ActionController
         echo json_encode($this->ajax_result);       
     }
 
-    public function preTermination()
+    public function execPreTermination()
     {
         try
         {   
@@ -247,7 +247,7 @@ class RequestFile extends ActionController
         echo json_encode($this->ajax_result);   
     }
 
-    public function document()
+    public function execDocument()
     {
         try
         {   
@@ -286,7 +286,7 @@ class RequestFile extends ActionController
     }
 
 
-    public function accountableForms()
+    public function execAccountableForms()
     {
         try
         {   

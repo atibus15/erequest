@@ -52,7 +52,7 @@ class LookUp extends ActionController
 
 
 
-    public function getLastRequestDate()
+    public function execGetLastRequestDate()
     {
         $request_code   = get_post('requestcode');
         $item_code      = get_post('itemcode');
@@ -81,7 +81,7 @@ class LookUp extends ActionController
         echo json_encode($this->ajax_result);
     }
 
-    public function getRequirements()
+    public function execGetRequirements()
     {
         $app_code = get_post('appcode');
         $sub_code = get_post('subcode');

@@ -17,13 +17,13 @@ class User extends ActionController
         $this->load->helper('output_sanitizer');
     }
 
-    public function logout()
+    public function execLogout()
     {
         session_destroy();
         header("location: index.php?_page=user&_action=loginpage");
     }
 
-    public function loginpage()
+    public function execLoginpage()
     {
         $this->load->css('login-style');
         $this->load->js('libraries/ext-4/ext-all');
@@ -31,7 +31,7 @@ class User extends ActionController
         $this->load->view('user/login');
     }
 
-   public function authPage()
+   public function execAuthPage()
     {
         $this->load->css('login-style');
         $this->load->js('libraries/ext-4/ext-all');
@@ -39,7 +39,7 @@ class User extends ActionController
         $this->load->view('user/authpage');
     }
 
-    public function homepage()
+    public function execHomepage()
     {
         if(userSession('bimsaccount') and !userSession('erequest'))
         {
@@ -62,7 +62,7 @@ class User extends ActionController
     }
 
     // use in erequest login modoule
-    public function authenticateUser()
+    public function execAuthenticateUser()
     {
         $this->username = post('username');
         $this->password = post('password');
@@ -124,7 +124,7 @@ class User extends ActionController
 
 
     // authenticate user that already logged-in in other finance system.
-    public function authLoggedinUser()
+    public function execAuthLoggedinUser()
     {
         $username = userSession('bimsaccount');
         $badge_no = userSession('badgeno');

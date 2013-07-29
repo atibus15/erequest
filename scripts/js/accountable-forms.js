@@ -195,7 +195,7 @@ request_detail =
                     maxLength   :150,
                     width       :923,
                     height      :50,
-                    emptyText   :'Type your remarks here..',
+                    
                     allowBlank  :true,
                     enableKeyEvents:true,
                     listeners   :{

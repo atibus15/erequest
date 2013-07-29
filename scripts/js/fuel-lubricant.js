@@ -338,7 +338,7 @@ Ext.onReady(function()
                                 name:'item_quantity',     
                                 width:45
                             },
-                            {e.stopEvent();
+                            {
                                 xtype :'combobox', 
                                 allowBlank:false, 
                                 name:'item_code',      

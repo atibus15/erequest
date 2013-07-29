@@ -19,7 +19,16 @@ class LookUp extends ActionController
         $sub_code = get_post('subappcode');
         try
         {
+            if(!$app_code or !$sub_code)
+            {
+                $this->ajax_result['errormsg'] = "Application and Sub-Application code is required.";
+                exit(json_encode($this->ajax_result));
+            }
+                
+
             $gen_dtl_final = array();
+
+            
             $this->lookupmodel = $this->load->model('LookUpModel');
             $gen_dtl = $this->lookupmodel->fetchGenDtlBySubCode($app_code,$sub_code);
 
@@ -33,7 +42,9 @@ class LookUp extends ActionController
         }
         catch(Exception $e)
         {
-            $this->ajax_result['errormsg'] = $e->getMessage();
+            $this->ajax_result['errormsg'] = "System error. Request Terminated.";
+            $this->load->helper('Logger');
+            Logger::write($e);
         }
 
         echo json_encode($this->ajax_result);
@@ -48,7 +59,11 @@ class LookUp extends ActionController
         
         try
         {
-            if(!$request_code or !$item_code) throw new RuntimeException("Request and Item code is required.", 1);
+            if(!$request_code or !$item_code) 
+            {
+                $this->ajax_result['errormsg'] = "Request and Item code is required.";
+                exit(json_encode($this->ajax_result)); 
+            }
 
             $this->requestmodel = $this->load->model('RequestModel');
 
@@ -59,7 +74,9 @@ class LookUp extends ActionController
         }
         catch(Exception $e)
         {
-            $this->ajax_result['errormsg'] = $e->getMessage();
+            $this->ajax_result['errormsg'] = "System error. Request Terminated.";
+            $this->load->helper('Logger');
+            Logger::write($e);
         }
         echo json_encode($this->ajax_result);
     }
@@ -71,7 +88,11 @@ class LookUp extends ActionController
 
         try
         {
-            if(!$app_code or !$sub_code) throw new RuntimeException("App Code and Sub App. Code is required.", 1);
+            if(!$app_code or !$sub_code)
+            {
+                $this->ajax_result['errormsg'] = "App Code and Sub App. Code is required.";
+                exit(json_encode($this->ajax_result));
+            }
 
             $this->lookupmodel  = $this->load->model('LookUpModel');
 
@@ -82,7 +103,9 @@ class LookUp extends ActionController
         }
         catch(Exception $e)
         {
-            $this->ajax_result['errormsg'] = $e->getMessage();
+            $this->ajax_result['errormsg'] = "System error. Request Terminated.";
+            $this->load->helper('Logger');
+            Logger::write($e);
         }
         echo json_encode($this->ajax_result);
     }

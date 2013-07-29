@@ -80,10 +80,9 @@ class Database
                     );
                     if(ibase_errcode())
                     {
-                        $this->_db_errmsg = "Cannot connect to database.";
+                        throw new RuntimeException("Cannot connect to database.");
                     }
                 }
-
                 else if($this->driver == "MySQL")
                 {
                     throw new RuntimeException("MySQL not yet supported.", 1);

@@ -1,5 +1,10 @@
 <?php
- // error_reporting(0);
+// @Author  : atibus
+// @Date    : 07/22/2013
+// @Desc    : RequestFile Controller
+// @System  : e-Request
+// @Dir     : /application/controller/RequestFile.php
+
 class RequestFile extends ActionController
 {
     private $requestmodel;
@@ -10,10 +15,22 @@ class RequestFile extends ActionController
 
     private $success_msg;
 
+    private $header_details = array();
+
+    private $request_details = array();
+
+    private $request_items = array();
+
     public function __construct()
     {
         parent::__construct();
         $this->ajax_result['success'] = false;
+
+        if(!userSession('erequest'))
+        {
+            $this->ajax_result['errormsg'] = 'Session expired, please relogin';
+            exit(json_encode($this->ajax_result));
+        }
 
         $this->success_msg = "Request succeeded.";
 
@@ -21,15 +38,64 @@ class RequestFile extends ActionController
         $this->requestmodel = $this->load->model('RequestModel');
     }
 
+    private function validateData()
+    {
+        $generic_error_msg = 'Please fill up all fields.';
+
+        if($this->header_details)
+        {
+            foreach($this->header_details as $key => $value)
+            {
+                if(!$value and $key != 6)
+                {
+                    $this->ajax_result['errormsg'] = $generic_error_msg;
+                    exit(json_encode($this->ajax_result));
+                } 
+            }
+        }
+
+        if($this->request_details)
+        {
+            foreach($this->request_details as $key => $value)
+            {
+                if(!$value and $key != 'remarks')
+                {
+                    $this->ajax_result['errormsg'] = $generic_error_msg;
+                    exit(json_encode($this->ajax_result));
+                } 
+            }
+        }
+
+        if($this->request_items)
+        {
+            foreach($this->request_items as $item)
+            {
+                $item_len = count($item);
+                for($i=0; $i<$item_len; $i++)
+                {
+                    if(!$item[$i])
+                    {
+                        $this->ajax_result['errormsg'] = $generic_error_msg;
+                        exit(json_encode($this->ajax_result));
+                    }
+                }
+            }
+        }
+
+        return;
+    }
+
     public function fuelLubricant()
     {
         try
         {   
-            $header_details     = $this->collectHeaderDetails('ERQ_FL');
-            $request_details    = $this->collectFuelLubeDtls();
+            $this->header_details     = $this->collectHeaderDetails('ERQ_FL');
+            $this->request_details    = $this->collectFuelLubeDtls();
 
-            $this->requestmodel->setHeaderDetails($header_details);
-            $this->requestmodel->setRequestDetails($request_details);
+            $this->validateData();
+
+            $this->requestmodel->setHeaderDetails($this->header_details);
+            $this->requestmodel->setRequestDetails($this->request_details);
 
             $this->requestmodel->insertHeader();
             $this->requestmodel->insertDetails('ERQ_FL');
@@ -48,7 +114,10 @@ class RequestFile extends ActionController
         catch(Exception $e)
         {
             $this->requestmodel->rollbackRequest();
-            $this->ajax_result['errormsg'] = $e->getMessage();
+
+            $this->ajax_result['errormsg'] = "System error. Request Terminated.";
+            $this->load->helper('Logger');
+            Logger::write($e);
         }
 
         echo json_encode($this->ajax_result);
@@ -58,17 +127,19 @@ class RequestFile extends ActionController
     {
         try
         {   
-            $header_details = $this->collectHeaderDetails('ERQ_RM');
-            $request_details= $this->collectRMDtls();
-            $r_m_items      = $this->collectRMItems();
+            $this->header_details     = $this->collectHeaderDetails('ERQ_RM');
+            $this->request_details    = $this->collectRMDtls();
+            $this->request_items      = $this->collectRMItems();
             
-            $this->requestmodel->setHeaderDetails( $header_details );
-            $this->requestmodel->setRequestDetails( $request_details );
+            $this->validateData();
+
+            $this->requestmodel->setHeaderDetails( $this->header_details );
+            $this->requestmodel->setRequestDetails( $this->request_details );
 
             $this->requestmodel->insertHeader();
             $this->requestmodel->insertDetails('ERQ_RM');
 
-            foreach($r_m_items as $item)
+            foreach($this->request_items as $item)
             {
                 $this->requestmodel->setRequestItem($item);
                 $this->requestmodel->insertItem("ERQ_RM");
@@ -90,7 +161,9 @@ class RequestFile extends ActionController
         catch(Exception $e)
         {
             $this->requestmodel->rollbackRequest();
-            $this->ajax_result['errormsg'] = $e->getMessage();
+            $this->ajax_result['errormsg'] = "System error. Request Terminated.";
+            $this->load->helper('Logger');
+            Logger::write($e);
         }
 
         echo json_encode($this->ajax_result);
@@ -101,11 +174,13 @@ class RequestFile extends ActionController
         try
         {   
 
-            $header_details = $this->collectHeaderDetails('ERQ_RES');
-            $request_details= $this->collectRESDtls();
+            $this->header_details     = $this->collectHeaderDetails('ERQ_RES');
+            $this->request_details    = $this->collectRESDtls();
             
-            $this->requestmodel->setHeaderDetails( $header_details );
-            $this->requestmodel->setRequestDetails( $request_details );
+            $this->validateData();
+            
+            $this->requestmodel->setHeaderDetails( $this->header_details );
+            $this->requestmodel->setRequestDetails( $this->request_details );
 
             $this->requestmodel->insertHeader();
             $this->requestmodel->insertDetails('ERQ_RES');
@@ -126,7 +201,9 @@ class RequestFile extends ActionController
         catch(Exception $e)
         {
             $this->requestmodel->rollbackRequest();
-            $this->ajax_result['errormsg'] = $e->getMessage();
+            $this->ajax_result['errormsg'] = "System error. Request Terminated.";
+            $this->load->helper('Logger');
+            Logger::write($e);
         }
 
         echo json_encode($this->ajax_result);       
@@ -137,11 +214,13 @@ class RequestFile extends ActionController
         try
         {   
 
-            $header_details = $this->collectHeaderDetails('ERQ_PRE');
-            $request_details= $this->collectPTDtls();
+            $this->header_details     = $this->collectHeaderDetails('ERQ_PRE');
+            $this->request_details    = $this->collectPreTermDtls();
             
-            $this->requestmodel->setHeaderDetails( $header_details );
-            $this->requestmodel->setRequestDetails( $request_details );
+            $this->validateData();
+
+            $this->requestmodel->setHeaderDetails( $this->header_details );
+            $this->requestmodel->setRequestDetails( $this->request_details );
 
             $this->requestmodel->insertHeader();
             $this->requestmodel->insertDetails('ERQ_PRE');
@@ -160,7 +239,9 @@ class RequestFile extends ActionController
         catch(Exception $e)
         {
             $this->requestmodel->rollbackRequest();
-            $this->ajax_result['errormsg'] = $e->getMessage();
+            $this->ajax_result['errormsg'] = "System error. Request Terminated.";
+            $this->load->helper('Logger');
+            Logger::write($e);
         }
 
         echo json_encode($this->ajax_result);   
@@ -171,11 +252,13 @@ class RequestFile extends ActionController
         try
         {   
 
-            $header_details = $this->collectHeaderDetails('ERQ_DOC');
-            $request_details   = $this->collectDocumentDtls();
+            $this->header_details     = $this->collectHeaderDetails('ERQ_DOC');
+            $this->request_details    = $this->collectDocumentDtls();
             
-            $this->requestmodel->setHeaderDetails( $header_details );
-            $this->requestmodel->setRequestDetails( $request_details );
+            $this->validateData();
+
+            $this->requestmodel->setHeaderDetails( $this->header_details );
+            $this->requestmodel->setRequestDetails( $this->request_details );
 
             $this->requestmodel->insertHeader();
             $this->requestmodel->insertDetails('ERQ_DOC');
@@ -194,10 +277,58 @@ class RequestFile extends ActionController
         catch(Exception $e)
         {
             $this->requestmodel->rollbackRequest();
-            $this->ajax_result['errormsg'] = $e->getMessage();
+            $this->ajax_result['errormsg'] = "System error. Request Terminated.";
+            $this->load->helper('Logger');
+            Logger::write($e);
         }
 
         echo json_encode($this->ajax_result); 
+    }
+
+
+    public function accountableForms()
+    {
+        try
+        {   
+            $this->header_details     = $this->collectHeaderDetails('ERQ_FRM');
+            $this->request_items      = $this->collectAccountableFormItems();
+            $this->request_details    = array( post('remarks'), userSession('userid') );
+
+            $this->validateData();
+            
+            $this->requestmodel->setHeaderDetails( $this->header_details );
+            $this->requestmodel->setRequestDetails( $this->request_details );
+
+            $this->requestmodel->insertHeader();
+
+            $this->requestmodel->insertDetails('ERQ_FRM');
+
+            foreach($this->request_items as $item)
+            {
+                $this->requestmodel->setRequestItem($item);
+                $this->requestmodel->insertItem("ERQ_FRM");
+            }
+
+            $current_request_id = $this->requestmodel->getCurrentRequestID();
+
+            $this->requestmodel->setHistoryDetails( array( $current_request_id,1,'',get_post('remarks'),userSession('userid') ) );
+            $this->requestmodel->insertHistory();
+
+            $this->requestmodel->commitRequest();
+
+            $this->ajax_result['success'] = true;
+            $this->ajax_result['message'] = $this->success_msg;
+
+        }
+        catch(Exception $e)
+        {
+            $this->requestmodel->rollbackRequest();
+            $this->ajax_result['errormsg'] = "System error. Request Terminated.";
+            $this->load->helper('Logger');
+            Logger::write($e);
+        }
+
+        echo json_encode($this->ajax_result);
     }
 
 
@@ -216,7 +347,10 @@ class RequestFile extends ActionController
         {
             if($req['ISREQUIRED'] and !http_file($req['STREQUIREID']))
             {
-                throw new Exception($req->DESCRIPTION." is required.", 1);
+                // rollback db transaction and exit process;
+                $this->requestmodel->rollbackRequest();
+                $this->ajax_result['errormsg'] = $req->DESCRIPTION." is required.";
+                exit($this->ajax_result);
             }
 
             $files[] = array('id'=>$req['STREQUIREID'],'description'=>$req['DESCRIPTION']);
@@ -253,7 +387,7 @@ class RequestFile extends ActionController
         $request_name_suffix= userSession('namesuffix') ? userSession('namesuffix') : NULL;
         $trans_level        = 1;
 
-        return $header_details_arr = array(
+        return $this->header_details_arr = array(
             userSession('badgeno'), 
             $request_code, 
             post('request_date'),
@@ -318,7 +452,7 @@ class RequestFile extends ActionController
 
     private function collectRMItems()
     {
-        $request_details = array();
+        $this->request_items = array();
 
         $item_number        = post('item_number');
         $item_quantity      = post('item_quantity');
@@ -332,7 +466,7 @@ class RequestFile extends ActionController
 
         for($i = 1; $i<=$items_len; $i++)
         {
-            $request_details[] = array(
+            $this->request_items[] = array(
                 $item_number[$i],
                 $item_code[$i],
                 $item_quantity[$i],
@@ -349,7 +483,50 @@ class RequestFile extends ActionController
             );  
         }
 
-        return $request_details;
+        return $this->request_items;
+    }
+
+    private function collectAccountableFormItems()
+    {
+        $this->request_items = array();
+
+        $item_codes = post('type');
+        $cps_from   = post('cps_from');
+        $cps_to     = post('cps_to');
+        $last_series= post('last_series_used');
+        $last_series_date= post('last_date_series_used');
+        $usp_from   = post('usp_from');
+        $usp_to     = post('usp_to');
+        $no_booklet = post('no_booklet');
+        $ap_badge_no= post('ap_badge_no');
+        $ap_name    = post('ap_name');
+        $ap_position= post('ap_position');
+        $ap_remarks = post('ap_remarks');  
+        $userid     = userSession('userid');
+
+        $items_len  = count($item_codes);
+
+        for($i=1; $i<=$items_len; $i++)
+        {
+            $this->request_items[] = array(
+                $i,
+                $item_codes[$i],
+                $cps_from[$i], 
+                $cps_to[$i], 
+                $last_series[$i],
+                $last_series_date[$i], 
+                $usp_from[$i],
+                $usp_to[$i],
+                $no_booklet[$i], 
+                $ap_badge_no[$i],
+                $ap_name[$i],
+                $ap_position[$i],
+                $ap_remarks[$i],
+                $userid
+            );
+        }
+
+        return $this->request_items;
     }
 
     private function collectRMDtls()
@@ -399,7 +576,7 @@ class RequestFile extends ActionController
         );
     }
 
-    private function collectPTDtls()
+    private function collectPreTermDtls()
     {
         return array(
             post('effective_date'),
@@ -422,6 +599,5 @@ class RequestFile extends ActionController
             post('remarks'),
             userSession('userid')
         );
-
     }
 }

@@ -21,9 +21,6 @@ class RequestModel extends Model
 
     public function insertHeader()
     {
-        
-        
-
         $query  =   "INSERT INTO EREQUEST
                             (BADGENO,REQUESTCODE,FILEDATE,LASTNAME,FIRSTNAME,MIDDLENAME,NAMESUFFIX,HIREDATE,
                             BUCODE,BUDESC,SAPBUCODE,BRANCHCODE,BRANCHDESC,DEPARTMENTCODE,DEPARTMENTDESC,
@@ -86,7 +83,12 @@ class RequestModel extends Model
             case 'ERQ_DOC':
                 $query  =   "INSERT INTO EREQDOC
                             (HEADERID,AGREEMENTNO,AGREEMENTNAME,MSIDATE,MCENGINENO,DOCTYPECODE,PURPOSECODE,REMARKS,CREATEDDATE,CREATEDBY)
-                            VALUES('{$current_id}',?,?,?,?,?,?,?,CURRENT_TIMESTAMP,?)"; 
+                            VALUES('{$current_id}',?,?,?,?,?,?,?,CURRENT_TIMESTAMP,?)";
+                break;
+            case 'ERQ_FRM': 
+                $query  =   "INSERT INTO EREQFRM
+                            (HEADERID,REMARKS,CREATEDDATE,CREATEDBY)
+                            VALUES('{$current_id}',?,CURRENT_TIMESTAMP,?)";
                 break;
         }
         

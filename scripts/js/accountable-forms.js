@@ -1,4 +1,4 @@
-idgen = 1;
+_item_number = 1;
 Ext.require(['Ext.panel.*','Ext.form.*', 'Ext.widget.*'])
 
 
@@ -14,13 +14,7 @@ request_header =
                 {xtype:'box',width:35,html:'&nbsp;'},
                 {labelWidth: 100,fieldLabel:'Branch Name', id:'requestor_branch', name:'requestor_branch'},
                 {xtype:'box',width:35,html:'&nbsp;'},
-                {labelWidth: 100,fieldLabel:'Company', name:'company'},
-            ]
-        },
-        {
-            items:
-            [
-                {width:300,fieldLabel:'Request Date', readOnly:true, name:'request_date', value:_today}
+                {width:280,fieldLabel:'Request Date', readOnly:true, name:'request_date', value:_today}
             ]
         }
     ]
@@ -34,7 +28,7 @@ request_detail =
     [
         {
             xtype:'fieldset',
-            padding:'5px 10px 0px 20px',
+            padding:'5px 0px 0px 20px',
             frame:true,
             border:true,
             collapsible:true,
@@ -46,7 +40,7 @@ request_detail =
                 layout:'column',
                 style:'padding:5px',
                 defaultType:'textfield',
-                defaults:{labelAlign:'top', style:'margin-right:5px;'},
+                defaults:{labelAlign:'top', style:'margin-right:5px;',allowBlank:false},
             },
             items:
             [
@@ -57,7 +51,7 @@ request_detail =
                         {
                             xtype:'combobox',
                             fieldLabel:'Type',
-                            name:'type[]',
+                            name:'type['+_item_number+']',
                             store:dropDownStore('EREQUEST','FRM_TYPE'),
                             displayField:'desc',
                             valueField:'code',
@@ -65,18 +59,28 @@ request_detail =
                         },
                         {
                             fieldLabel:'From',
-                            name:'cps_from[]',
-                            width:105
+                            maskRe  :/[1234567890]/,
+                            name:'cps_from['+_item_number+']',
+                            width:75
                         },
                         {
                             fieldLabel:'To',
-                            name:'cps_to[]',
-                            width:105
+                            maskRe  :/[1234567890]/,
+                            name:'cps_to['+_item_number+']',
+                            width:75
                         },
                         {
-                            fieldLabel:'Last Series Used',
-                            name:'lastseriesused[]',
-                            width:105
+                            fieldLabel:'Last series used',
+                            maskRe  :/[1234567890]/,
+                            name:'last_series_used['+_item_number+']',
+                            width:100
+                        },
+                        {
+                            xtype:'datefield',
+                            fieldLabel:'Last date of series used',
+                            maskRe  :/[1234567890]/,
+                            name:'last_date_series_used['+_item_number+']',
+                            width:135
                         }
                     ]
                 },
@@ -87,18 +91,21 @@ request_detail =
                     [
                         {
                             fieldLabel:'From',
-                            name:'usp_from[]',
-                            width:105
+                            maskRe  :/[1234567890]/,
+                            name:'usp_from['+_item_number+']',
+                            width:75
                         },
                         {
                             fieldLabel:'To',
-                            name:'usp_to[]',
-                            width:105
+                            maskRe  :/[1234567890]/,
+                            name:'usp_to['+_item_number+']',
+                            width:75
                         },
                         {
                             fieldLabel:'No. of Booklet',
-                            name:'no_booklet',
-                            width:105
+                            maskRe  :/[1234567890]/,
+                            name:'no_booklet['+_item_number+']',
+                            width:90
                         }
                     ]
                 },
@@ -107,18 +114,52 @@ request_detail =
                     items:
                     [
                         {
-                            fieldLabel:'Badge No.',
-                            name:'badgeno'
+                            xtype       :'textfield',
+                            name        :'ap_badge_no['+_item_number+']',
+                            emptyText   :'Badge No.',
+                            width       :75,
+                            enableKeyEvents:true,
+                            listeners   : {
+                                blur:function(){
+                                    if(this.isDirty() && this.getValue())
+                                    {
+                                        this.resetOriginalValue();
+                                        var emp_detail = getEmployeeDetails(this.getValue());
+                                        if(emp_detail)
+                                        {
+                                            this.findParentByType('fieldset').getComponent(1).setValue(emp_detail.data.NAME);
+                                            this.findParentByType('fieldset').getComponent(2).setValue(emp_detail.data.POSITIONDESC);
+                                        }
+                                        else
+                                        {
+                                            this.findParentByType('fieldset').getComponent(1).setValue('');
+                                            this.findParentByType('fieldset').getComponent(2).setValue('');
+                                            this.focus();
+                                        }   
+                                    }
+                                }
+                            }
                         },
                         {
-                            fieldLabel:'Name',
-                            name:'name[]',
-                            width:250
+                            readOnly    :true,
+                            xtype       :'mytextfield',
+                            name        :'ap_name['+_item_number+']',
+                            readOnly    :true,
+                            emptyText   :'Name',
+                            width       :200
                         },
                         {
-                            fieldLabel:'Remarks',
-                            name:'remarks[]',
-                            width:488
+                            readOnly    :true,
+                            xtype       :'mytextfield',
+                            name        :'ap_position['+_item_number+']',
+                            readOnly    :true,
+                            emptyText   :'Position',
+                            width       :200
+                        },
+                        {
+                            name:'ap_remarks['+_item_number+']',
+                            emptyText:'Remarks',
+                            width:407
                         }
                     ]
                 }
@@ -141,6 +182,33 @@ request_detail =
                 }
             ]
 
+        },
+        {
+            padding:'15px 0 15px 0',
+            items:
+            [
+                {
+                    xtype       :'textarea',
+                    name        :'remarks',
+                    fieldLabel  :'Remarks',
+                    // labelWidth  :100,
+                    maxLength   :150,
+                    width       :923,
+                    height      :50,
+                    emptyText   :'Type your remarks here..',
+                    allowBlank  :true,
+                    enableKeyEvents:true,
+                    listeners   :{
+                        keypress:function(f,e)
+                        {
+                            if((this.getValue().length >= this.maxLength) && e.getKey() != 8)
+                            {
+                                e.stopEvent();
+                            }
+                        }
+                    }
+                }
+            ]
         },
 //########## FOOTER ##############///        
         {
@@ -188,20 +256,24 @@ Ext.onReady(function(){
 
     fillFormValue();
 
+    request_form.down('toolbar').getComponent(0).on('click',function()
+    {
+        submitRequestForm('accountableForms');
+    });
 });
 
 
 function addRequestItem()
 {
-    idgen++;
+    _item_number++;
 
-    if(idgen <= 10)
+    if(_item_number <= 10)
     {
-        var new_id      = 'req_detail-'+idgen;
+        var new_id      = 'req_detail-'+_item_number;
 
-        var index       = idgen - 1;
+        var index       = _item_number - 1;
 
-        var new_fieldset_title = 'Request '+idgen;
+        var new_fieldset_title = 'Request '+_item_number;
 
         var detail_panel = Ext.getCmp('req-detail-panel');
 
@@ -216,14 +288,35 @@ function addRequestItem()
                 handler:function()
                 {
                         this.findParentByType('fieldset').destroy();
-                        idgen--;
+                        _item_number--;
                 }
             });
+
+        //override new fieldset component names
+
+        var inner_fieldset1 = new_fieldset.getComponent(1);
+        var inner_fieldset2 = new_fieldset.getComponent(2);
+        var inner_fieldset3 = new_fieldset.getComponent(3);
+
+        inner_fieldset1.getComponent(0).name = 'type['+_item_number+']';
+        inner_fieldset1.getComponent(1).name = 'cps_from['+_item_number+']';
+        inner_fieldset1.getComponent(2).name = 'cps_to['+_item_number+']';
+        inner_fieldset1.getComponent(3).name = 'last_series_used['+_item_number+']';
+        inner_fieldset1.getComponent(4).name = 'last_date_series_used['+_item_number+']';
+
+        inner_fieldset2.getComponent(0).name = 'usp_from['+_item_number+']';
+        inner_fieldset2.getComponent(1).name = 'usp_to['+_item_number+']';
+        inner_fieldset2.getComponent(2).name = 'no_booklet['+_item_number+']';
+        
+        inner_fieldset3.getComponent(0).name = 'ap_badge_no['+_item_number+']';
+        inner_fieldset3.getComponent(1).name = 'ap_name['+_item_number+']';
+        inner_fieldset3.getComponent(2).name = 'ap_position['+_item_number+']';
+        inner_fieldset3.getComponent(3).name = 'ap_remarks['+_item_number+']';
                        
 
         detail_panel.insert(index, new_fieldset);
 
-        if(idgen==10)
+        if(_item_number==10)
         {
             Ext.getCmp('add-btn').disable(true);
         }

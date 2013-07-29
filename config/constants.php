@@ -22,6 +22,7 @@
     DEFINE('DB_CONFIG', ROOT_DIR."/config/database.ini");
     DEFINE('LIBRARY_DIR',ROOT_DIR."/libraries/");
     DEFINE('DATABASE',  UTI_CORE."Database.php");
+    DEFINE('ERROR_LOG_FILE',ROOT_DIR."/logs/error_logs.txt");
     DEFINE('FB',        'FireBird');
     DEFINE('MYSQL',     'MySQL');
 ?>

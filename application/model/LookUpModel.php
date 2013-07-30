@@ -35,4 +35,14 @@ class LookUpModel extends Model
         return $requirements_arr;
     }
 
+    public function fetchRequestTypes()
+    {
+        $query  =   "SELECT MASTERCODE,DESCRIPTION FROM LKGENMASTER ORDER BY SEQNO ASC";
+        $this->db->prepare($query);
+        $this->db->execute();
+
+        $request_types_arr = $this->db->fetchArray();
+        return $request_types_arr;
+    }
+
 }

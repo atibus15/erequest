@@ -17,12 +17,13 @@ Ext.define('Request',
     extend:'Ext.data.Model',
     fields:
     [
-        {name:'FILEDATE',           type:'string'},
-        {name:'STATUS_ASOF',        type:'string'},
-        {name:'CURR_LEVEL',         type:'int'},
-        {name:'CURR_LEVEL_INCHARGE',type:'string'},
-        {name:'LAST_ACTION',        type:'string'},
-        {name:'REMARKS',            type:'string'}
+        {name:'EREQUESTID'  ,type:'string'},
+        {name:'BADGENO'     ,type:'string'},
+        {name:'FIRSTNAME'   ,type:'string'},
+        {name:'FILEDATE'    ,type:'string'},
+        {name:'TRLEVEL'     ,type:'int'},
+        {name:'LASTACTION'  ,type:'string'},    
+        {name:'CREATEDDATE' ,type:'string'}
     ]
 });
 
@@ -51,7 +52,7 @@ request_grid_store = Ext.create('Ext.data.Store',
     proxy :
     {
         type:'ajax',
-        url:'to_store.php',
+        url:'index.php?_page=Processing&_action=getRequestByType',
         reader:
         {
             type:'json',
@@ -68,7 +69,7 @@ history_grid_store = Ext.create('Ext.data.Store',
     proxy :
     {
         type:'ajax',
-        url:'to_store.php',
+        url:'index.php?_page=Processing&_action=getRequestHistoryById',
         reader:
         {
             type:'json',
@@ -90,7 +91,7 @@ history_grid_store = Ext.create('Ext.data.Store',
 
 //##################### VIEW COMPONENT HERE ############################////
 request_filter_panel = 
-Ext.create('Ext.panel.Panel',
+Ext.create('Ext.form.FormPanel',
 {
     bodyStyle:'background-color:transparent;',
     autoWidth:true,
@@ -107,16 +108,17 @@ Ext.create('Ext.panel.Panel',
         {
             id:'status',
             xtype:'combobox',
-            store:[['P','Pending'],['C','Close']],
+            store:[[0,'Pending'],[1,'Close']],
             fieldLabel:'Status',
-            value:'P',
+            value:0,
             labelWidth:50,
             width:175
         },
         {
-            id:'req-type',
+            id:'request_type',
+            name:'request_type',
             xtype:'combobox',
-            // store:type_store,
+            store:requestTypeStore(),
             valueField:'code',
             displayField:'desc',
             fieldLabel:'Request Type',
@@ -124,18 +126,20 @@ Ext.create('Ext.panel.Panel',
             width:250
         },
         {
-            id:'date-range-start',
+            id:'date_start',
+            name:'date_start',
             xtype:'datefield',
-            editable:false,
             fieldLabel:'Date From',
+            maxValue:_today,
             labelWidth:65,
             width:200
         },
         {
-            id:'date-range-end',
+            id:'date_end',
+            name:'date_end',
             xtype:'datefield',
-            editable:false,
             fieldLabel:'Date To',
+            maxValue:_today,
             labelWidth:60,
             width:200
         },
@@ -143,7 +147,6 @@ Ext.create('Ext.panel.Panel',
             xtype:'button',
             text:'Show',
             style:'margin-top:8px;',
-
             iconCls:'search-icon',
             autoWidth:true,
             handler:function()
@@ -179,10 +182,10 @@ Ext.create('Ext.grid.Panel',
     columns:
     [
         {text:'File Date',      dataIndex:'FILEDATE', width:100},
-        {text:'Status as of',   dataIndex:'STATUS_ASOF', width:100},
-        {text:'Current Level',  dataIndex:'CURR_LEVEL',width:100},
+        {text:'Status as of',   dataIndex:'CREATEDDATE', width:100},
+        {text:'Current Level',  dataIndex:'TRLEVEL',width:100},
         {text:'Current Level Incharge', dataIndex:'CURR_LEVEL_INCHARGE',width:250},
-        {text:'Last Action',    dataIndex:'LAST_ACTION', width:250}
+        {text:'Last Action',    dataIndex:'LASTACTION', width:250}
     ]
 });
 
@@ -228,7 +231,7 @@ Ext.create('Ext.grid.Panel',
     [
         {text:'Reference ID',dataIndex:'REFID',         width:100},
         {text:'Level',       dataIndex:'LEVEL',         width:100},
-        {text:'Last Action', dataIndex:'LAST_ACTION',   width:100},
+        {text:'Last Action', dataIndex:'LASTACTION',   width:100},
         {text:'Status Date', dataIndex:'STATUS_DATE',   width:100},
         {text:'Username',    dataIndex:'USERNAME',      width:250}
     ]

@@ -109,4 +109,31 @@ class LookUp extends ActionController
         }
         echo $this->buildJson( $this->ajax_result );
     }
+
+    public function execGetRequestTypes()
+    {
+        try
+        {
+            $request = array();
+
+            $this->lookupmodel  = $this->load->model('LookUpModel');
+
+            $request_types_arr    = $this->lookupmodel->fetchRequestTypes();
+
+            foreach ($request_types_arr as $request_type) 
+            {
+               $request[] = array('code'=>$request_type['MASTERCODE'], 'desc'=>$request_type['DESCRIPTION']);
+            }
+
+            $this->ajax_result['success'] = true;
+            $this->ajax_result['data'] = $request;
+        }
+        catch(Exception $e)
+        {
+            $this->ajax_result['errormsg'] = "System error. Request Terminated.";
+            $this->load->helper('Logger');
+            Logger::write($e);
+        }
+        echo $this->buildJson( $this->ajax_result );
+    }
 }

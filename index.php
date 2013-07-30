@@ -1,5 +1,5 @@
 <?php
-    error_reporting(0);
+    // error_reporting(0);
 
     DEFINE('ROOT_DIR',  dirname(__FILE__));
     include_once ROOT_DIR.'/config/constants.php';

@@ -9,7 +9,6 @@
         <link rel="SHORTCUT ICON" href="./styles/images/icons/coins-icon.png"/>
         <link rel="stylesheet" type="text/css" href="./libraries/ext-4/resources/css/ext-all-scoped.css">
         <link rel="stylesheet" type="text/css" href="./libraries/bootstrap/css/bootstrap.css">
-        <link rel="stylesheet" type="text/css" href="./libraries/bootstrap/css/bootstrap-responsive.css">
         <link rel="stylesheet" type="text/css" href="./styles/application.css">
         <link rel="stylesheet" type="text/css" href="./styles/ui-style.css">
         <?php

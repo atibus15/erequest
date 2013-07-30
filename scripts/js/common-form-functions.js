@@ -50,6 +50,22 @@ function dropDownStore(appcode, subappcode)
     });
 }
 
+
+function requestTypeStore()
+{
+    return Ext.create('Ext.data.ArrayStore',
+    {
+        model:'Dropdown',
+        proxy:
+        {
+            type:'ajax',
+            url:'?_page=lookUp&_action=getRequestTypes',
+            reader:{root:'data'}
+        },
+        autoLoad:false
+    });
+}
+
 function getEmployeeDetails(badge_no)
 {
     var wait_box = Ext.Msg.wait('Loading Employee Info...','e-Request');
@@ -162,12 +178,9 @@ function submitRequestForm(module_method)
             return false;
         }
     })
-
-    // console.log(first_invalid_field);
     if(first_invalid_field)
     {
         first_invalid_field.focus();
-        // first_invalid_field.
         return false;
     }
     

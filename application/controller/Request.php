@@ -110,6 +110,7 @@ class Request extends ActionController
     {
         $this->checkUserPrivilege();
         $data['form_title'] = "Action Screen";
+        $this->load->js('scripts/js/common-form-functions');
         $this->load->js('scripts/js/mc-request-inc');
         $this->load->js('scripts/js/r_and_m_admin2');
         $this->load->js('scripts/js/request-processing');

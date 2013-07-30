@@ -12,3 +12,4 @@
 	    </div>
 	</div>
 </div>
+<?php $this->view('user/hiddeninfo'); ?>

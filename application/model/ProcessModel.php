@@ -36,7 +36,7 @@ class ProcessModel extends Model
 
     public function fetchRequestByType()
     {
-        $query  =   "SELECT r.EREQUESTID,r.REQUESTCODE, r.BADGENO, r.FIRSTNAME, r.FILEDATE, r.TRLEVEL,h.LASTACTION, h.CREATEDDATE FROM EREQUEST r 
+        $query  =   "SELECT DISTINCT r.EREQUESTID,r.REQUESTCODE, r.BADGENO, r.FIRSTNAME, r.FILEDATE, r.TRLEVEL,h.LASTACTION, h.CREATEDDATE FROM EREQUEST r 
                     JOIN EREQHIST h on h.HEADERID = r.EREQUESTID and h.TRLEVEL = r.TRLEVEL ORDER BY r.FILEDATE DESC, r.EREQUESTID DESC";
 
         $this->db->prepare($query);
@@ -47,5 +47,20 @@ class ProcessModel extends Model
 
         return $request_list;
     }
-    
+
+    public function fetchRequestIncharges($request_code, $tr_level)
+    {
+        $incharge_arr = array();
+
+        $query  =   "SELECT DISTINCT u.USERID from STROUTE r , USERROLE u WHERE u.ROLECODE = r.LEVELROLE and r.MASTERCODE=? and r.LEVELNO=? and u.ISACTIVE=1";
+        $this->db->prepare($query);
+        $this->db->execute(array($request_code, $tr_level));
+        $incharge = $this->db->fetchArray();
+
+        foreach($incharge as $val)
+        {
+            $incharge_arr[] = $val['USERID'];
+        }
+        return $incharge_arr;
+    }
 }

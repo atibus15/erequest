@@ -8,4 +8,6 @@
 at /var/www/erequest/libraries/Uploader.php.. Line: 64
 07/29/2013 14:55:57 : --> Error: Unable to create user directory, no permission to write file.
 at /var/www/erequest/libraries/Uploader.php.. Line: 64
+08/01/2013 15:26:46 : --> Invalid Badge No.
+at /var/www/erequest/helper/exception_helper.php.. Line: 7
 

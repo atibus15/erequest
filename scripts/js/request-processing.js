@@ -17,13 +17,15 @@ Ext.define('Request',
     extend:'Ext.data.Model',
     fields:
     [
-        {name:'EREQUESTID'  ,type:'string'},
-        {name:'BADGENO'     ,type:'string'},
-        {name:'FIRSTNAME'   ,type:'string'},
-        {name:'FILEDATE'    ,type:'string'},
-        {name:'TRLEVEL'     ,type:'int'},
-        {name:'LASTACTION'  ,type:'string'},    
-        {name:'CREATEDDATE' ,type:'string'}
+        {name:'EREQUESTID'},
+        {name:'REQUESTCODE'},
+        {name:'BADGENO'},
+        {name:'FIRSTNAME'},
+        {name:'FILEDATE'},   
+        {name:'TRLEVEL'},  
+        {name:'LASTACTION'},  
+        {name:'CREATEDDATE'},
+        {name:'LEVELINCHARGES'}
     ]
 });
 
@@ -184,7 +186,7 @@ Ext.create('Ext.grid.Panel',
         {text:'File Date',      dataIndex:'FILEDATE', width:100},
         {text:'Status as of',   dataIndex:'CREATEDDATE', width:100},
         {text:'Current Level',  dataIndex:'TRLEVEL',width:100},
-        {text:'Current Level Incharge', dataIndex:'CURR_LEVEL_INCHARGE',width:250},
+        {text:'Current Level Incharge', dataIndex:'LEVELINCHARGES',width:250},
         {text:'Last Action',    dataIndex:'LASTACTION', width:250}
     ]
 });

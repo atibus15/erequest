@@ -21,6 +21,18 @@ class Processing extends ActionController
         {
             $request_list_arr = $this->processmodel->fetchRequestByType();
 
+            $request_list_len = count($request_list_arr);
+
+            for($i=0; $i<$request_list_len ; $i++)
+            {
+                $request        = $request_list_arr[$i];
+                $request_code   = trim($request['REQUESTCODE']);
+                $tr_level       = trim($request['TRLEVEL']);
+
+                $level_incharge_arr = $this->getRequestIncharges($request_code, $tr_level);
+                $request_list_arr[$i]['LEVELINCHARGES'] = implode(', ',$level_incharge_arr);
+            }
+
             $this->ajax_result['data'] = $request_list_arr;
             $this->ajax_result['success'] = true;
         }
@@ -32,5 +44,10 @@ class Processing extends ActionController
         }
 
         echo $this->buildJson($this->ajax_result);
+    }
+
+    private function getRequestIncharges($request_code, $tr_level)
+    {
+        return $this->processmodel->fetchRequestIncharges($request_code, $tr_level);
     }
 }

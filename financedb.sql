@@ -1,0 +1,2620 @@
+/*******************************************************************************
+ * Selected metadata objects
+ * -------------------------
+ * Extracted at 8/3/2013 9:44:28 AM
+ ******************************************************************************/
+
+/*******************************************************************************
+ * Roles
+ * -----
+ * Extracted at 8/3/2013 9:44:28 AM
+ ******************************************************************************/
+
+/* "PUBLIC" is a system role, no CREATE ROLE statement. */
+/* "RDB$ADMIN" is a system role, no CREATE ROLE statement. */
+CREATE ROLE SDG_USER;
+GRANT SDG_USER TO SDG_BSBERNABE, SDG_KBVILLARUBIA, SDG_MMISIDRO, SDG_RGPEREZ, SDG_RVGOZARIN;
+/*******************************************************************************
+ * UDFs
+ * ----
+ * Extracted at 8/3/2013 9:44:28 AM
+ ******************************************************************************/
+
+/*******************************************************************************
+ * Generators
+ * ----------
+ * Extracted at 8/3/2013 9:44:28 AM
+ ******************************************************************************/
+
+CREATE GENERATOR BRANCHLVLHIST_GEN;
+CREATE GENERATOR BRANCH_GEN;
+CREATE GENERATOR BRCONTACTDTL_GEN;
+CREATE GENERATOR EREQDOC_GEN;
+CREATE GENERATOR EREQFL_GEN;
+CREATE GENERATOR EREQFRM_GEN;
+CREATE GENERATOR EREQHISTID_GEN;
+CREATE GENERATOR EREQPRE_GEN;
+CREATE GENERATOR EREQREQUIRE_GEN;
+CREATE GENERATOR EREQRES_GEN;
+CREATE GENERATOR EREQRM_GEN;
+CREATE GENERATOR EREQSA_GEN;
+CREATE GENERATOR EREQUEST_GEN;
+CREATE GENERATOR LEASEINFODTL_GEN;
+CREATE GENERATOR LKDBLOCN_GEN;
+CREATE GENERATOR LKRCLUSTER_GEN;
+CREATE GENERATOR LKSLOCN_GEN;
+CREATE GENERATOR SAPDETAILS_GEN;
+CREATE GENERATOR SLOCNDTL_GEN;
+/*******************************************************************************
+ * Domains
+ * -------
+ * Extracted at 8/3/2013 9:44:28 AM
+ ******************************************************************************/
+
+CREATE DOMAIN BADGENO AS 
+ CHAR(5)
+ NOT NULL
+ COLLATE ISO8859_1;
+CREATE DOMAIN BOOLEANFALSE AS 
+ SMALLINT
+ DEFAULT 0
+ NOT NULL
+;
+CREATE DOMAIN BOOLEANTRUE AS 
+ SMALLINT
+ DEFAULT 1
+ NOT NULL
+;
+CREATE DOMAIN CODECHAR2 AS 
+ CHAR(2)
+ NOT NULL
+ COLLATE ISO8859_1;
+CREATE DOMAIN CODECHAR3 AS 
+ CHAR(3)
+ NOT NULL
+ COLLATE ISO8859_1;
+CREATE DOMAIN CODECHAR4 AS 
+ CHAR(4)
+ NOT NULL
+ COLLATE ISO8859_1;
+CREATE DOMAIN FLAGCHAR1 AS 
+ CHAR(1)
+ NOT NULL
+ COLLATE ISO8859_1;
+CREATE DOMAIN FLAGCHAR2 AS 
+ CHAR(2)
+ NOT NULL
+ COLLATE ISO8859_1;
+CREATE DOMAIN LONGERTEXT AS 
+ VARCHAR(150)
+ COLLATE ISO8859_1;
+CREATE DOMAIN LONGTEXT AS 
+ VARCHAR(100)
+ COLLATE ISO8859_1;
+CREATE DOMAIN MEDIUMTEXT AS 
+ VARCHAR(50)
+ COLLATE ISO8859_1;
+CREATE DOMAIN NUMBERBIG AS 
+ NUMERIC(10,2)
+ DEFAULT 0
+;
+CREATE DOMAIN NUMBERSMALL AS 
+ NUMERIC(5,2)
+ DEFAULT 0
+;
+CREATE DOMAIN SHORTERTEXT AS 
+ VARCHAR(15)
+ COLLATE ISO8859_1;
+CREATE DOMAIN SHORTTEXT AS 
+ VARCHAR(25)
+ COLLATE ISO8859_1;
+CREATE DOMAIN TEXTCODELONG AS 
+ CHAR(10)
+ NOT NULL
+ COLLATE ISO8859_1;
+CREATE DOMAIN TEXTCODELONGER AS 
+ CHAR(20)
+ NOT NULL
+ COLLATE ISO8859_1;
+CREATE DOMAIN TEXTCODESHORT AS 
+ CHAR(5)
+ NOT NULL
+ COLLATE ISO8859_1;
+SET TERM ^^ ;
+/*******************************************************************************
+ * Procedure Headers
+ * -----------------
+ * Extracted at 8/3/2013 9:44:28 AM
+ ******************************************************************************/
+
+CREATE PROCEDURE P_LIST_BRANCH returns (
+  O_BRANCHCODE Char(4), 
+  O_BUGROUPCODE Char(2), 
+  O_BUGROUPDESC VarChar(50), 
+  O_COMPANYNAMESHORT VarChar(15), 
+  O_BRANCHNAME VarChar(100), 
+  O_TRADENAMESHORT VarChar(15), 
+  O_OPENDATE Date, 
+  O_CLOSEDATE Date, 
+  O_CREATEDDATE Timestamp, 
+  O_MAINBRANCHCODE Char(4), 
+  O_MAINBUGROUPCODE Char(2), 
+  O_STORELVLCODE Char(10), 
+  O_STORELVLDESC VarChar(50), 
+  O_MAINBRANCHNAME VarChar(100)) AS
+BEGIN
+  SUSPEND;
+END ^^
+SET TERM ; ^^
+/*******************************************************************************
+ * Tables
+ * ------
+ * Extracted at 8/3/2013 9:44:28 AM
+ ******************************************************************************/
+
+CREATE TABLE ADMENUMAST 
+(
+  MENUID                 SMALLINT         NOT NULL,
+  MENUGROUP              SMALLINT         NOT NULL,
+  CAPTION              MEDIUMTEXT NOT NULL,
+  ITEMNAME             MEDIUMTEXT NOT NULL,
+  ITEMLEVEL              SMALLINT         NOT NULL,
+  ITEMTYPE              FLAGCHAR1 DEFAULT 'M',
+  ITEMLINK               LONGTEXT ,
+  ITEMPAGE               LONGTEXT ,
+  ITEMACTION             LONGTEXT ,
+  ISACTIVE            BOOLEANTRUE ,
+ CONSTRAINT PK_ADMENUMAST PRIMARY KEY (MENUID)
+);
+CREATE TABLE ADMENUMAST2 
+(
+  MENUID                 SMALLINT         NOT NULL,
+  MENUGROUP              SMALLINT         NOT NULL,
+  CAPTION              MEDIUMTEXT NOT NULL,
+  ITEMNAME             MEDIUMTEXT NOT NULL,
+  ITEMLEVEL              SMALLINT         NOT NULL,
+  ITEMTYPE              FLAGCHAR1 DEFAULT 'M',
+  ITEMLINK               LONGTEXT ,
+  ITEMPAGE               LONGTEXT ,
+  ITEMACTION             LONGTEXT ,
+  ISACTIVE            BOOLEANTRUE ,
+ CONSTRAINT PK_ADMENUMAST2 PRIMARY KEY (MENUID)
+);
+CREATE TABLE ADROLEMAST 
+(
+  ROLECODE             TEXTCODELONGER ,
+  ROLEDESC                 MEDIUMTEXT NOT NULL,
+  APPCODE                TEXTCODELONG ,
+  SEQNO                      SMALLINT         NOT NULL,
+  ISACTIVE                BOOLEANTRUE ,
+  CREATEDDATE               TIMESTAMP,
+  CREATEDBY                MEDIUMTEXT ,
+  LASTUPDATEDATE            TIMESTAMP,
+  LASTUPDATEBY             MEDIUMTEXT ,
+ CONSTRAINT PK_ADROLEMAST PRIMARY KEY (ROLECODE)
+);
+CREATE TABLE ADROLEMENU 
+(
+  ROLECODE             TEXTCODELONGER ,
+  MENUID                     SMALLINT         NOT NULL,
+  CREATEDDATE               TIMESTAMP,
+  CREATEDBY                MEDIUMTEXT ,
+  LASTUPDATEDATE            TIMESTAMP,
+  LASTUPDATEBY             MEDIUMTEXT ,
+ CONSTRAINT PK_ADROLEMENU PRIMARY KEY (ROLECODE, MENUID)
+);
+CREATE TABLE BRANCH 
+(
+  BRANCHID                        BIGINT         NOT NULL,
+  BRANCHCODE                   CODECHAR4 ,
+  BUGROUPCODE                  CODECHAR2 ,
+  COMPANYCODE                  CODECHAR4 ,
+  BRANCHNAME                    LONGTEXT NOT NULL,
+  BRANCHSNAME                SHORTERTEXT ,
+  TRADENAMECODE             TEXTCODELONG ,
+  ADDRESS                       LONGTEXT NOT NULL,
+  TIN                        SHORTERTEXT ,
+  MAILINGADDRESS              LONGERTEXT ,
+  LTONO                      SHORTERTEXT ,
+  CORNO                      SHORTERTEXT ,
+  CORDATE                           DATE,
+  OPENDATE                          DATE,
+  CLOSEDATE                         DATE,
+  SAPFIRSTTRANDATE                  DATE,
+  BRANCHTYPECODE                    CHAR(    10)  COLLATE ISO8859_1,
+  STORELVLCODE                      CHAR(    10)  COLLATE ISO8859_1,
+  REGIONCODE                TEXTCODELONG ,
+  REGIONNAME                   SHORTTEXT ,
+  RCLUSTERCODE              TEXTCODELONG ,
+  SBUCODE                      CODECHAR3 ,
+  UCLUSTERCODE              TEXTCODELONG ,
+  USCLUSTERCODE             TEXTCODELONG ,
+  INSAPPCODE                TEXTCODELONG ,
+  DBLOCNCODE                        CHAR(    10)  COLLATE ISO8859_1,
+  CONTACTNO                   MEDIUMTEXT ,
+  DIRLOC                      MEDIUMTEXT ,
+  AREASQM                    NUMBERSMALL ,
+  BRANCHCAP                  NUMBERSMALL ,
+  LESSOR                      MEDIUMTEXT ,
+  LEASEPAYEE                  MEDIUMTEXT ,
+  LEASETERM                  NUMBERSMALL ,
+  LEASECOMMENCEDATE                 DATE,
+  LEASEEXPIREDATE                   DATE,
+  CREATEDDATE                  TIMESTAMP,
+  CREATEDBY                   MEDIUMTEXT ,
+  LASTUPDATEDDATE              TIMESTAMP,
+  LASTUPDATEDBY               MEDIUMTEXT ,
+ PRIMARY KEY (BRANCHCODE, BUGROUPCODE)
+);
+update rdb$relation_fields set rdb$description = 'tele branch' where rdb$relation_name = 'BRANCH' and rdb$field_name = 'CONTACTNO';
+CREATE TABLE BRANCHLVLHIST 
+(
+  BRANCHLVLHISTID               BIGINT         NOT NULL,
+  BRANCHCODE                 CODECHAR4 ,
+  BUGROUPCODE                CODECHAR2 ,
+  STARTDATE                       DATE         NOT NULL,
+  ENDDATE                         DATE,
+  STORELVLCODE            TEXTCODELONG ,
+  MAINBRANCHCODE                  CHAR(     4)  COLLATE ISO8859_1,
+  MAINBUGROUPCODE                 CHAR(     2)  COLLATE ISO8859_1,
+  REMARKS                   MEDIUMTEXT ,
+  CREATEDDATE                TIMESTAMP,
+  CREATEDBY                 MEDIUMTEXT ,
+  LASTUPDATEDATE             TIMESTAMP,
+  LASTUPDATEBY              MEDIUMTEXT ,
+ CONSTRAINT PK_BRANCHLVLHIST PRIMARY KEY (BRANCHLVLHISTID)
+);
+CREATE TABLE BRCONTACTDTL 
+(
+  BRCONTACTID                  BIGINT         NOT NULL,
+  BRANCHCODE                CODECHAR4 ,
+  BUGROUPCODE               CODECHAR2 ,
+  CONTACTNAME              MEDIUMTEXT ,
+  POSITIONCODE           TEXTCODELONG ,
+  OFFCLCONTACTNO          SHORTERTEXT ,
+  PERSCONTACTNO           SHORTERTEXT ,
+  EMAILADDRESS             MEDIUMTEXT ,
+  CREATEDDATE               TIMESTAMP,
+  CREATEDBY                MEDIUMTEXT ,
+  LASTUPDATEDATE            TIMESTAMP,
+  LASTUPDATEBY             MEDIUMTEXT ,
+ CONSTRAINT PK_BRCONTACTDTL PRIMARY KEY (BRCONTACTID)
+);
+CREATE TABLE EREQDOC 
+(
+  EREQDTLID                       BIGINT         NOT NULL,
+  HEADERID                        BIGINT         NOT NULL,
+  AGREEMENTNO                  SHORTTEXT NOT NULL,
+  AGREEMENTNAME               MEDIUMTEXT NOT NULL,
+  MSIDATE                           DATE         NOT NULL,
+  MCENGINENO                   SHORTTEXT NOT NULL,
+  DOCTYPECODE               TEXTCODELONG ,
+  PURPOSECODE               TEXTCODELONG ,
+  REMARKS                     LONGERTEXT ,
+  PROCESSEDBADGENO                  CHAR(     5)  COLLATE ISO8859_1,
+  PROCESSEDNAME                  VARCHAR(    55)  COLLATE ISO8859_1,
+  PROCESSEDPOSITION           MEDIUMTEXT ,
+  PROCESSEDDATE                     DATE,
+  TRANSLIPNO                   SHORTTEXT ,
+  TRANSMITDATE                      DATE,
+  EXPECTDATE                        DATE         COMPUTED BY ( TRANSMITDATE + 15),
+  EXTENDEDBADGENO                   CHAR(     5)  COLLATE ISO8859_1,
+  EXTENDEDNAME                   VARCHAR(    55)  COLLATE ISO8859_1,
+  EXTENDEDPOSITION            MEDIUMTEXT ,
+  EXTENDEDDATE                      DATE,
+  EXTENDDATE                        DATE,
+  ACTUALDATE                        DATE,
+  CREATEDDATE                  TIMESTAMP,
+  CREATEDBY                   MEDIUMTEXT ,
+  LASTUPDATEDATE               TIMESTAMP,
+  LASTUPDATEBY                MEDIUMTEXT ,
+ CONSTRAINT PK_EREQDOC PRIMARY KEY (EREQDTLID)
+);
+CREATE TABLE EREQFL 
+(
+  EREQDTLID                      BIGINT         NOT NULL,
+  HEADERID                       BIGINT         NOT NULL,
+  SUTYPE                   TEXTCODELONG ,
+  MCMAKECODE               TEXTCODELONG ,
+  MCMODEL                    MEDIUMTEXT NOT NULL,
+  MCPLATENO                   SHORTTEXT NOT NULL,
+  MCENGINENO                  SHORTTEXT NOT NULL,
+  MCCHASSISNO                 SHORTTEXT NOT NULL,
+  ACQUIREDDATE                     DATE         NOT NULL,
+  ODOMREADING               NUMBERSMALL NOT NULL,
+  LASTPMSDATE                      DATE         NOT NULL,
+  SERVINGSHOP                MEDIUMTEXT NOT NULL,
+  ITEMCODE                 TEXTCODELONG ,
+  ITEMBRAND                TEXTCODELONG ,
+  LASTREQDATE                      DATE         NOT NULL,
+  PCIPRICE                    NUMBERBIG ,
+  STORE2NAME                 MEDIUMTEXT NOT NULL,
+  STORE2PRICE                 NUMBERBIG ,
+  STORE3NAME                 MEDIUMTEXT NOT NULL,
+  STORE3PRICE                 NUMBERBIG ,
+  VERIFIEDBADGENO               BADGENO ,
+  VERIFIEDNAME                  VARCHAR(    55) NOT NULL COLLATE ISO8859_1,
+  VERIFIEDPOSITION           MEDIUMTEXT NOT NULL,
+  VERIFIEDDATE                     DATE         NOT NULL,
+  RECOMBADGENO                  BADGENO ,
+  RECOMNAME                     VARCHAR(    55) NOT NULL COLLATE ISO8859_1,
+  RECOMPOSITION              MEDIUMTEXT NOT NULL,
+  RECOMDATE                        DATE         NOT NULL,
+  REMARKS                    LONGERTEXT ,
+  CREATEDDATE                 TIMESTAMP,
+  CREATEDBY                  MEDIUMTEXT ,
+  LASTUPDATEDATE              TIMESTAMP,
+  LASTUPDATEBY               MEDIUMTEXT ,
+ CONSTRAINT PK_EREQFL PRIMARY KEY (EREQDTLID)
+);
+CREATE TABLE EREQFRM 
+(
+  EREQDTLID                       BIGINT         NOT NULL,
+  HEADERID                        BIGINT         NOT NULL,
+  REMARKS                     LONGERTEXT ,
+  ACKNOWLBADGENO                    CHAR(     5)  COLLATE ISO8859_1,
+  ACKNOWLNAME                    VARCHAR(    55)  COLLATE ISO8859_1,
+  ACKNOWLPOSITION             MEDIUMTEXT ,
+  ACKNOWLDATE                       DATE,
+  PROCESSEDBADGENO                  CHAR(     5)  COLLATE ISO8859_1,
+  PROCESSEDNAME                  VARCHAR(    55)  COLLATE ISO8859_1,
+  PROCESSEDPOSITION           MEDIUMTEXT ,
+  PROCESSEDDATE                     DATE,
+  CREATEDDATE                  TIMESTAMP,
+  CREATEDBY                   MEDIUMTEXT ,
+  LASTUPDATEDATE               TIMESTAMP,
+  LASTUPDATEBY                MEDIUMTEXT ,
+ CONSTRAINT PK_EREQFRM PRIMARY KEY (EREQDTLID)
+);
+CREATE TABLE EREQFRMDTL 
+(
+  HEADERID                       BIGINT         NOT NULL,
+  ITEMNO                       SMALLINT         NOT NULL,
+  ITEMCODE                 TEXTCODELONG ,
+  CURRPADFROM                    BIGINT         NOT NULL,
+  CURRPADTO                      BIGINT         NOT NULL,
+  CURRPADLAST                    BIGINT         NOT NULL,
+  CURRPADLASTDATE                  DATE         NOT NULL,
+  UNUSEDPADFROM                  BIGINT         NOT NULL,
+  UNUSEDPADTO                    BIGINT         NOT NULL,
+  UNUSEDPADNUMBOOK             SMALLINT         NOT NULL,
+  PERSBADGENO                   BADGENO ,
+  PERSNAME                      VARCHAR(    55) NOT NULL COLLATE ISO8859_1,
+  PERSPOSITION               MEDIUMTEXT NOT NULL,
+  PERSREMARKS                LONGERTEXT ,
+  CREATEDDATE                 TIMESTAMP,
+  CREATEDBY                  MEDIUMTEXT ,
+  LASTUPDATEDATE              TIMESTAMP,
+  LASTUPDATEBY               MEDIUMTEXT ,
+ CONSTRAINT PK_EREQFRMDTL PRIMARY KEY (HEADERID, ITEMNO)
+);
+CREATE TABLE EREQHIST 
+(
+  EREQHISTID                   BIGINT         NOT NULL,
+  HEADERID                     BIGINT         NOT NULL,
+  TRLEVEL                    SMALLINT         NOT NULL,
+  LASTACTION               MEDIUMTEXT NOT NULL,
+  REMARKS                  LONGERTEXT ,
+  CREATEDDATE               TIMESTAMP,
+  CREATEDBY                MEDIUMTEXT ,
+  LASTUPDATEDATE            TIMESTAMP,
+  LASTUPDATEBY             MEDIUMTEXT ,
+ CONSTRAINT PK_EREQHIST PRIMARY KEY (EREQHISTID)
+);
+CREATE TABLE EREQPRE 
+(
+  EREQDTLID                       BIGINT         NOT NULL,
+  HEADERID                        BIGINT         NOT NULL,
+  EFFECTDATE                        DATE         NOT NULL,
+  AGREEMENTNO                  SHORTTEXT NOT NULL,
+  AGREEMENTNAME               MEDIUMTEXT NOT NULL,
+  REMARKS                     LONGERTEXT ,
+  RECVBALPRINCIPAL             NUMBERBIG ,
+  RECVPREPENALTY               NUMBERBIG ,
+  RECVOVERDUE                  NUMBERBIG ,
+  RECVOTHERDUE                 NUMBERBIG ,
+  RECVRESERVED1                NUMBERBIG ,
+  RECVRESERVED2                NUMBERBIG ,
+  GROSSRECV                      NUMERIC(  8, 2) COMPUTED BY ( RECVBALPRINCIPAL + RECVPREPENALTY + RECVOVERDUE + RECVOTHERDUE + RECVRESERVED1 + RECVRESERVED2 ),
+  PAYREFUND                    NUMBERBIG ,
+  PAYMANUAL                    NUMBERBIG ,
+  PAYOTHER                     NUMBERBIG ,
+  PAYRESERVED1                 NUMBERBIG ,
+  PAYRESERVED2                 NUMBERBIG ,
+  GROSSPAY                       NUMERIC(  8, 2) COMPUTED BY ( PAYREFUND + PAYMANUAL + PAYOTHER + PAYRESERVED1 + PAYRESERVED2 ),
+  NETRECV                        NUMERIC(  8, 2) COMPUTED BY ( GROSSRECV - GROSSPAY ),
+  COMPUTEDBADGENO                   CHAR(     5)  COLLATE ISO8859_1,
+  COMPUTEDNAME                   VARCHAR(    55)  COLLATE ISO8859_1,
+  COMPUTEDPOSITION            MEDIUMTEXT ,
+  COMPUTEDDATE                      DATE,
+  VALIDATEDBADGENO                  CHAR(     5)  COLLATE ISO8859_1,
+  VALIDATEDNAME                  VARCHAR(    55)  COLLATE ISO8859_1,
+  VALIDATEDPOSITION           MEDIUMTEXT ,
+  VALIDATEDDATE                     DATE,
+  PAYMENTTRANSNO                 INTEGER,
+  PAYMENTDATE                       DATE,
+  PAYMENTAMOUNT                NUMBERBIG ,
+  CREATEDDATE                  TIMESTAMP,
+  CREATEDBY                   MEDIUMTEXT ,
+  LASTUPDATEDATE               TIMESTAMP,
+  LASTUPDATEBY                MEDIUMTEXT ,
+ CONSTRAINT PK_EREQPRE PRIMARY KEY (EREQDTLID)
+);
+CREATE TABLE EREQREQUIRE 
+(
+  REQUIREID                    BIGINT         NOT NULL,
+  HEADERID                     BIGINT         NOT NULL,
+  STREQUIREID                SMALLINT         NOT NULL,
+  FILENAME                  SHORTTEXT NOT NULL,
+  CREATEDDATE               TIMESTAMP,
+  CREATEDBY                MEDIUMTEXT ,
+  LASTUPDATEDATE            TIMESTAMP,
+  LASTUPDATEBY             MEDIUMTEXT ,
+ CONSTRAINT PK_EREQREQUIRE PRIMARY KEY (REQUIREID)
+);
+CREATE TABLE EREQRES 
+(
+  EREQDTLID                         BIGINT         NOT NULL,
+  HEADERID                          BIGINT         NOT NULL,
+  EFFECTDATE                          DATE         NOT NULL,
+  AGREEMENTNO                    SHORTTEXT NOT NULL,
+  AGREEMENTNAME                 MEDIUMTEXT NOT NULL,
+  REQTYPECODE                 TEXTCODELONG ,
+  OLDTERM                         SMALLINT,
+  OLDDUEDAY                       SMALLINT,
+  OLDMA                          NUMBERBIG ,
+  CNCAPPROVERBADGENO               BADGENO ,
+  CNCAPPROVERNAME                  VARCHAR(    55) NOT NULL COLLATE ISO8859_1,
+  CNCAPPROVERPOSITION           MEDIUMTEXT NOT NULL,
+  CNCAPPROVERDATE                     DATE         NOT NULL,
+  REMARKS                       LONGERTEXT ,
+  DUEDATEEMI                          DATE,
+  NUMDAYSDUE                      SMALLINT         COMPUTED BY ( EFFECTDATE - DUEDATEEMI ),
+  RECVBALPRINCIPAL               NUMBERBIG ,
+  RECVINTRATE                  NUMBERSMALL ,
+  RECVCURYEARDAYS                 SMALLINT,
+  RECVINTGAP                       NUMERIC( 10, 2) COMPUTED BY ( RECVBALPRINCIPAL * NUMDAYSDUE * RECVINTRATE / 100 / RECVCURYEARDAYS ),
+  RECVOTHERDUE                   NUMBERBIG ,
+  RECVRESERVED1                  NUMBERBIG ,
+  RECVRESERVED2                  NUMBERBIG ,
+  GROSSRECV                        NUMERIC( 10, 2) COMPUTED BY ( RECVINTGAP + RECVOTHERDUE + RECVRESERVED1 + RECVRESERVED2 ),
+  PAYWAIVEDAMT                   NUMBERBIG ,
+  PAYOTHER                       NUMBERBIG ,
+  PAYRESERVED1                   NUMBERBIG ,
+  PAYRESERVED2                   NUMBERBIG ,
+  GROSSPAY                         NUMERIC( 10, 2) COMPUTED BY ( PAYWAIVEDAMT + PAYOTHER + PAYRESERVED1 + PAYRESERVED2 ),
+  NETRECV                          NUMERIC( 10, 2) COMPUTED BY ( GROSSRECV - GROSSPAY ),
+  NEWTERM                         SMALLINT,
+  NEWDUEDAY                       SMALLINT,
+  NEWMA                          NUMBERBIG ,
+  COMPUTEDBADGENO                     CHAR(     5)  COLLATE ISO8859_1,
+  COMPUTEDNAME                     VARCHAR(    55)  COLLATE ISO8859_1,
+  COMPUTEDPOSITION              MEDIUMTEXT ,
+  COMPUTEDDATE                        DATE,
+  VALIDATEDBADGENO                    CHAR(     5)  COLLATE ISO8859_1,
+  VALIDATEDNAME                    VARCHAR(    55)  COLLATE ISO8859_1,
+  VALIDATEDPOSITION             MEDIUMTEXT ,
+  VALIDATEDDATE                       DATE,
+  PAYMENTTRANSNO                   INTEGER,
+  PAYMENTDATE                         DATE,
+  PAYMENTAMOUNT                  NUMBERBIG ,
+  CREATEDDATE                    TIMESTAMP,
+  CREATEDBY                     MEDIUMTEXT ,
+  LASTUPDATEDATE                 TIMESTAMP,
+  LASTUPDATEBY                  MEDIUMTEXT ,
+ CONSTRAINT PK_EREQRES PRIMARY KEY (EREQDTLID)
+);
+CREATE TABLE EREQRM 
+(
+  EREQDTLID                      BIGINT         NOT NULL,
+  HEADERID                       BIGINT         NOT NULL,
+  SUTYPE                   TEXTCODELONG ,
+  MCMAKECODE               TEXTCODELONG ,
+  MCMODEL                    MEDIUMTEXT NOT NULL,
+  MCPLATENO                   SHORTTEXT NOT NULL,
+  MCENGINENO                  SHORTTEXT NOT NULL,
+  MCCHASSISNO                 SHORTTEXT NOT NULL,
+  ACQUIREDDATE                     DATE         NOT NULL,
+  ODOMREADING               NUMBERSMALL NOT NULL,
+  LASTPMSDATE                      DATE         NOT NULL,
+  SERVINGSHOP                MEDIUMTEXT NOT NULL,
+  STORE2NAME                 MEDIUMTEXT NOT NULL,
+  STORE3NAME                 MEDIUMTEXT NOT NULL,
+  VERIFIEDBADGENO               BADGENO ,
+  VERIFIEDNAME                  VARCHAR(    55) NOT NULL COLLATE ISO8859_1,
+  VERIFIEDPOSITION           MEDIUMTEXT NOT NULL,
+  VERIFIEDDATE                     DATE         NOT NULL,
+  RECOMBADGENO                  BADGENO ,
+  RECOMNAME                     VARCHAR(    55) NOT NULL COLLATE ISO8859_1,
+  RECOMPOSITION              MEDIUMTEXT NOT NULL,
+  RECOMDATE                        DATE         NOT NULL,
+  AVAILBALANCE                NUMBERBIG ,
+  REMARKS                    LONGERTEXT ,
+  REVIEWEDBADGENO                  CHAR(     5)  COLLATE ISO8859_1,
+  REVIEWEDNAME                  VARCHAR(    55)  COLLATE ISO8859_1,
+  REVIEWEDPOSITION           MEDIUMTEXT ,
+  REVIEWEDDATE                     DATE,
+  ALLOWDEDUCT                 NUMBERBIG ,
+  ATOEDEDUCT                  NUMBERBIG ,
+  TOTALAPPROVEDAMT            NUMBERBIG ,
+  CREATEDDATE                 TIMESTAMP,
+  CREATEDBY                  MEDIUMTEXT ,
+  LASTUPDATEDATE              TIMESTAMP,
+  LASTUPDATEBY               MEDIUMTEXT ,
+ CONSTRAINT PK_EREQRM PRIMARY KEY (EREQDTLID)
+);
+CREATE TABLE EREQRMDTL 
+(
+  HEADERID                       BIGINT         NOT NULL,
+  ITEMNO                       SMALLINT         NOT NULL,
+  ITEMCODE                 TEXTCODELONG ,
+  ITEMQTY                      SMALLINT         DEFAULT 1 NOT NULL,
+  ITEMBRAND                  MEDIUMTEXT NOT NULL,
+  LASTREQDATE                      DATE         NOT NULL,
+  PCIPRICE                    NUMBERBIG ,
+  PCIPRICETOTAL                 NUMERIC( 10, 2) COMPUTED BY ( ITEMQTY * PCIPRICE ),
+  STORE2PRICE                 NUMBERBIG ,
+  STORE2PRICETOTAL              NUMERIC( 10, 2) COMPUTED BY ( ITEMQTY * STORE2PRICE ),
+  STORE3PRICE                 NUMBERBIG ,
+  STORE3PRICETOTAL              NUMERIC( 10, 2) COMPUTED BY ( ITEMQTY * STORE3PRICE ),
+  APPROVEDAMT                 NUMBERBIG ,
+  CREATEDDATE                 TIMESTAMP,
+  CREATEDBY                  MEDIUMTEXT ,
+  LASTUPDATEDATE              TIMESTAMP,
+  LASTUPDATEBY               MEDIUMTEXT ,
+ CONSTRAINT PK_EREQRMDTL PRIMARY KEY (HEADERID, ITEMNO)
+);
+CREATE TABLE EREQSA 
+(
+  EREQDTLID                     BIGINT         NOT NULL,
+  HEADERID                      BIGINT         NOT NULL,
+  AGENTLNAME                 SHORTTEXT NOT NULL,
+  AGENTFNAME                 SHORTTEXT NOT NULL,
+  AGENTMNAME                 SHORTTEXT NOT NULL,
+  AGENTTIN                 SHORTERTEXT NOT NULL,
+  REMARKS                   LONGERTEXT ,
+  SISREQDATE                      DATE,
+  SISISSUENO                    BIGINT,
+  ACKNOWLBADGENO                  CHAR(     5)  COLLATE ISO8859_1,
+  ACKNOWLNAME                  VARCHAR(    55)  COLLATE ISO8859_1,
+  ACKNOWLPOSITION           MEDIUMTEXT ,
+  ACKNOWLDATE                     DATE,
+  VENDORCODE               SHORTERTEXT ,
+  CLOSEBADGENO                    CHAR(     5)  COLLATE ISO8859_1,
+  CLOSENAME                    VARCHAR(    55)  COLLATE ISO8859_1,
+  CLOSEPOSITION             MEDIUMTEXT ,
+  CLOSEDATE                       DATE,
+  CREATEDDATE                TIMESTAMP,
+  CREATEDBY                 MEDIUMTEXT ,
+  LASTUPDATEDATE             TIMESTAMP,
+  LASTUPDATEBY              MEDIUMTEXT ,
+ CONSTRAINT PK_EREQSA PRIMARY KEY (EREQDTLID)
+);
+CREATE TABLE EREQUEST 
+(
+  EREQUESTID                     BIGINT         NOT NULL,
+  BADGENO                       BADGENO ,
+  REQUESTCODE              TEXTCODELONG ,
+  FILEDATE                         DATE         DEFAULT CURRENT_DATE NOT NULL,
+  LASTNAME                    SHORTTEXT NOT NULL,
+  FIRSTNAME                   SHORTTEXT NOT NULL,
+  MIDDLENAME                  SHORTTEXT NOT NULL,
+  NAMESUFFIX                    VARCHAR(     5)  COLLATE ISO8859_1,
+  FULLNAME                      VARCHAR(    55) COMPUTED BY ( LASTNAME || ', ' || FIRSTNAME || ' ' || SUBSTRING(MIDDLENAME FROM 1 FOR 1) || '.' || COALESCE ( ' ' || NAMESUFFIX, '' ) ),
+  HIREDATE                         DATE         NOT NULL,
+  BUCODE                  TEXTCODESHORT ,
+  BUDESC                     MEDIUMTEXT NOT NULL,
+  SAPBUCODE                   CODECHAR4 ,
+  BRANCHCODE                  CODECHAR4 ,
+  BRANCHDESC                   LONGTEXT NOT NULL,
+  DEPARTMENTCODE                   CHAR(     2) NOT NULL COLLATE ISO8859_1,
+  DEPARTMENTDESC             MEDIUMTEXT NOT NULL,
+  POSITIONCODE                     CHAR(    10) NOT NULL COLLATE ISO8859_1,
+  POSITIONDESC               MEDIUMTEXT NOT NULL,
+  TRLEVEL                      SMALLINT         DEFAULT 1 NOT NULL,
+  ISCLOSED                 BOOLEANFALSE ,
+  ISSTATUSPOSITIVE         BOOLEANFALSE ,
+  CREATEDDATE                 TIMESTAMP,
+  CREATEDBY                  MEDIUMTEXT ,
+  LASTUPDATEDATE              TIMESTAMP,
+  LASTUPDATEBY               MEDIUMTEXT ,
+ CONSTRAINT PK_EREQUEST PRIMARY KEY (EREQUESTID)
+);
+update rdb$relation_fields set rdb$description = '1 = Approved, Pre-Terminated, Adjusted
+0 = Disapproved, Cancelled' where rdb$relation_name = 'EREQUEST' and rdb$field_name = 'ISSTATUSPOSITIVE';
+CREATE TABLE LEASEINFODTL 
+(
+  LEASEINFOID                  BIGINT         NOT NULL,
+  BRANCHCODE                CODECHAR4 ,
+  BUGROUPCODE               CODECHAR2 ,
+  AREANO                  SHORTERTEXT NOT NULL,
+  LEASEFROM                      DATE,
+  LEASETO                        DATE,
+  RENTALDUE               NUMBERSMALL NOT NULL,
+  CREATEDDATE               TIMESTAMP,
+  CREATEDBY                MEDIUMTEXT ,
+  LASTUPDATEDATE            TIMESTAMP,
+  LASTUPDATEBY             MEDIUMTEXT ,
+ CONSTRAINT PK_LEASEINFODTL PRIMARY KEY (LEASEINFOID)
+);
+CREATE TABLE LKBRANCHTYPE 
+(
+  BRANCHTYPECODE         TEXTCODELONG ,
+  BRANCHTYPEDESC           MEDIUMTEXT NOT NULL,
+  SEQNO                      SMALLINT         NOT NULL,
+  ISACTIVE                BOOLEANTRUE ,
+  CREATEDDATE               TIMESTAMP,
+  CREATEDBY                MEDIUMTEXT ,
+  LASTUPDATEDATE            TIMESTAMP,
+  LASTUPDATEBY             MEDIUMTEXT ,
+ CONSTRAINT PK_LKBRANCHTYPE PRIMARY KEY (BRANCHTYPECODE)
+);
+CREATE TABLE LKBUGROUP 
+(
+  BUGROUPCODE               CODECHAR2 ,
+  BUGROUPDESC              MEDIUMTEXT NOT NULL,
+  SAPFIX1                        CHAR(     2)  COLLATE ISO8859_1,
+  SAPFIX2                        CHAR(     2)  COLLATE ISO8859_1,
+  SAPFIX3                        CHAR(     2)  COLLATE ISO8859_1,
+  D10                    BOOLEANFALSE ,
+  D20                    BOOLEANFALSE ,
+  D30                    BOOLEANFALSE ,
+  D40                    BOOLEANFALSE ,
+  D50                    BOOLEANFALSE ,
+  D60                    BOOLEANFALSE ,
+  D70                    BOOLEANFALSE ,
+  CREATEDDATE               TIMESTAMP,
+  CREATEDBY                MEDIUMTEXT ,
+  LASTUPDATEDATE            TIMESTAMP,
+  LASTUPDATEBY             MEDIUMTEXT ,
+ CONSTRAINT PK_LKBUGROUP PRIMARY KEY (BUGROUPCODE)
+);
+CREATE TABLE LKCOMPANY 
+(
+  COMPANYCODE                  CODECHAR4 ,
+  COMPANYNAMESHORT           SHORTERTEXT NOT NULL,
+  PORTALCOMPANYCODE                 CHAR(     4)  COLLATE ISO8859_1,
+  COMPANYNAMELONG             MEDIUMTEXT NOT NULL,
+  CREATEDDATE                  TIMESTAMP,
+  CREATEDBY                   MEDIUMTEXT ,
+  LASTUPDATEDATE               TIMESTAMP,
+  LASTUPDATEBY                MEDIUMTEXT ,
+ CONSTRAINT PK_LKCOMPANY PRIMARY KEY (COMPANYCODE)
+);
+CREATE TABLE LKDBLOCN 
+(
+  ID                           BIGINT         NOT NULL,
+  DBLOCNCODE             TEXTCODELONG ,
+  DBLOCNDESC               MEDIUMTEXT NOT NULL,
+  CREATEDDATE               TIMESTAMP,
+  CREATEDBY                MEDIUMTEXT ,
+  LASTUPDATEDATE            TIMESTAMP,
+  LASTUPDATEBY             MEDIUMTEXT ,
+ CONSTRAINT PK_LKDBLOCN PRIMARY KEY (DBLOCNCODE)
+);
+CREATE TABLE LKDEPARTMENT 
+(
+  DEPARTMENTCODE            CODECHAR2 ,
+  DEPARTMENTDESC           MEDIUMTEXT NOT NULL,
+  SEQNOMLIST                 SMALLINT,
+  CREATEDDATE               TIMESTAMP,
+  CREATEDBY                MEDIUMTEXT ,
+  LASTUPDATEDATE            TIMESTAMP,
+  LASTUPDATEBY             MEDIUMTEXT ,
+ CONSTRAINT PK_LKDEPARTMENT PRIMARY KEY (DEPARTMENTCODE)
+);
+CREATE TABLE LKGENDTL 
+(
+  DTLCODE                TEXTCODELONG ,
+  DESCRIPTION              MEDIUMTEXT NOT NULL,
+  APPCODE                TEXTCODELONG ,
+  SUBAPPCODE             TEXTCODELONG ,
+  SEQNO                      SMALLINT         NOT NULL,
+  ISACTIVE                BOOLEANTRUE ,
+  CREATEDDATE               TIMESTAMP,
+  CREATEDBY                MEDIUMTEXT ,
+  LASTUPDATEDATE            TIMESTAMP,
+  LASTUPDATEBY             MEDIUMTEXT ,
+ CONSTRAINT PK_LKGENDTL PRIMARY KEY (DTLCODE)
+);
+CREATE TABLE LKGENMASTER 
+(
+  MASTERCODE             TEXTCODELONG ,
+  DESCRIPTION              MEDIUMTEXT NOT NULL,
+  APPCODE                TEXTCODELONG ,
+  SEQNO                      SMALLINT         NOT NULL,
+  ISACTIVE                BOOLEANTRUE ,
+  CREATEDDATE               TIMESTAMP,
+  CREATEDBY                MEDIUMTEXT ,
+  LASTUPDATEDATE            TIMESTAMP,
+  LASTUPDATEBY             MEDIUMTEXT ,
+ CONSTRAINT PK_LKGENMASTER PRIMARY KEY (MASTERCODE)
+);
+CREATE TABLE LKINSAPP 
+(
+  INSAPPCODE             TEXTCODELONG ,
+  INSAPPDESC               MEDIUMTEXT NOT NULL,
+  CREATEDATE                TIMESTAMP,
+  CREATEDBY                MEDIUMTEXT ,
+  LASTUPDATEDATE            TIMESTAMP,
+  LASTUPDATEBY             MEDIUMTEXT ,
+ CONSTRAINT PK_LKINSAPP PRIMARY KEY (INSAPPCODE)
+);
+CREATE TABLE LKPOSITION 
+(
+  POSITIONCODE           TEXTCODELONG ,
+  POSITIONDESC             MEDIUMTEXT NOT NULL,
+  CREATEDDATE               TIMESTAMP,
+  CREATEDBY                MEDIUMTEXT ,
+  LASTUPDATEDATE            TIMESTAMP,
+  LASTUPDATEBY             MEDIUMTEXT ,
+ CONSTRAINT PK_LKPOSITION PRIMARY KEY (POSITIONCODE)
+);
+CREATE TABLE LKRCLUSTER 
+(
+  RCLUSTERCODE              TEXTCODELONG ,
+  REGIONCODE                        CHAR(    10)  COLLATE ISO8859_1,
+  RCLUSTERDESCSHORT            SHORTTEXT NOT NULL,
+  RCLUSTERDESCLONG            MEDIUMTEXT NOT NULL,
+  CREATEDDATE                  TIMESTAMP,
+  CREATEDBY                   MEDIUMTEXT ,
+  LASTUPDATEDATE               TIMESTAMP,
+  LASTUPDATEBY                MEDIUMTEXT ,
+ CONSTRAINT PK_LKRCLUSTER PRIMARY KEY (RCLUSTERCODE)
+);
+CREATE TABLE LKREGION 
+(
+  REGIONCODE              TEXTCODELONG ,
+  REGIONDESCSHORT            SHORTTEXT NOT NULL,
+  REGIONDESCLONG            MEDIUMTEXT NOT NULL,
+  CREATEDDATE                TIMESTAMP,
+  CREATEDBY                 MEDIUMTEXT ,
+  LASTUPDATEDATE             TIMESTAMP,
+  LASTUPDATEBY              MEDIUMTEXT ,
+ CONSTRAINT PK_LKREGION PRIMARY KEY (REGIONCODE)
+);
+CREATE TABLE LKSBU 
+(
+  SBUCODE                   CODECHAR3 ,
+  SBUDESCSHORT            SHORTERTEXT NOT NULL,
+  SBUDESCLONG              MEDIUMTEXT NOT NULL,
+  CREATEDDATE               TIMESTAMP,
+  CREATEDBY                MEDIUMTEXT ,
+  LASTUPDATEDATE            TIMESTAMP,
+  LASTUPDATEBY             MEDIUMTEXT ,
+ CONSTRAINT PK_LKSBU PRIMARY KEY (SBUCODE)
+);
+CREATE TABLE LKSLOCN 
+(
+  LKSLOCN_ID                   BIGINT         NOT NULL,
+  SLOCNCODE                 CODECHAR3 ,
+  SLOCNDESC                MEDIUMTEXT NOT NULL,
+  SLOCNADDRESS               LONGTEXT NOT NULL,
+  CREATEDATE                TIMESTAMP,
+  CREATEDBY                MEDIUMTEXT ,
+  LASTUPDATEDATE            TIMESTAMP,
+  LASTUPDATEBY             MEDIUMTEXT ,
+ CONSTRAINT PK_LKSLOCN PRIMARY KEY (SLOCNCODE)
+);
+CREATE TABLE LKSTORELVL 
+(
+  STORELVLCODE             TEXTCODELONG ,
+  STORELVLDESC               MEDIUMTEXT NOT NULL,
+  STORELVLCATEGORY             SMALLINT         NOT NULL,
+  SEQNO                        SMALLINT         NOT NULL,
+  ISACTIVE                  BOOLEANTRUE ,
+  CREATEDDATE                 TIMESTAMP,
+  CREATEDBY                  MEDIUMTEXT ,
+  LASTUPDATEDATE              TIMESTAMP,
+  LASTUPDATEBY               MEDIUMTEXT ,
+ CONSTRAINT PK_LKSTORELVL PRIMARY KEY (STORELVLCODE)
+);
+CREATE TABLE LKTRADENAME 
+(
+  TRADENAMECODE          TEXTCODELONG ,
+  TRADENAMESHORT          SHORTERTEXT NOT NULL,
+  TRADENAMELONG            MEDIUMTEXT NOT NULL,
+  CREATEDDATE               TIMESTAMP,
+  CREATEDBY                MEDIUMTEXT ,
+  LASTUPDATEDATE            TIMESTAMP,
+  LASTUPDATEBY             MEDIUMTEXT ,
+ CONSTRAINT PK_LKTRADENAME PRIMARY KEY (TRADENAMECODE)
+);
+CREATE TABLE LKUCLUSTER 
+(
+  UCLUSTERCODE              TEXTCODELONG ,
+  UCLUSTERDESCSHORT            SHORTTEXT NOT NULL,
+  UCLUSTERDESCLONG            MEDIUMTEXT NOT NULL,
+  CREATEDDATE                  TIMESTAMP,
+  CREATEDBY                   MEDIUMTEXT ,
+  LASTUPDATEDATE               TIMESTAMP,
+  LASTUPDATEBY                MEDIUMTEXT ,
+ CONSTRAINT PK_LKUCLUSTER PRIMARY KEY (UCLUSTERCODE)
+);
+CREATE TABLE LKUSCLUSTER 
+(
+  USCLUSTERCODE              TEXTCODELONG ,
+  UCLUSTERCODE               TEXTCODELONG ,
+  USCLUSTERDESCSHORT            SHORTTEXT NOT NULL,
+  USCLUSTERDESCLONG            MEDIUMTEXT NOT NULL,
+  CREATEDDATE                   TIMESTAMP,
+  CREATEDBY                    MEDIUMTEXT ,
+  LASTUPDATEDATE                TIMESTAMP,
+  LASTUPDATEBY                 MEDIUMTEXT ,
+ CONSTRAINT PK_LKUSCLUSTER PRIMARY KEY (USCLUSTERCODE)
+);
+CREATE TABLE SAPDETAILS 
+(
+  ID                           BIGINT         NOT NULL,
+  BRANCHCODE                CODECHAR4 ,
+  BUGROUPCODE               CODECHAR2 ,
+  PLANT_CODE                     CHAR(     5)  COLLATE ISO8859_1,
+  CUST_ACCTNO                    CHAR(     5)  COLLATE ISO8859_1,
+  AR_ACCTNO                      CHAR(     6) DEFAULT NULL COLLATE ISO8859_1,
+  DIVISION                       CHAR(     2)  COLLATE ISO8859_1,
+  DISTCH10               BOOLEANFALSE ,
+  DISTCH20               BOOLEANFALSE ,
+  DISTCH30               BOOLEANFALSE ,
+  DISTCH40               BOOLEANFALSE ,
+  DISTCH50               BOOLEANFALSE ,
+  DISTCH60               BOOLEANFALSE ,
+  DISTCH70               BOOLEANFALSE ,
+  CREATEDDATE               TIMESTAMP,
+  CREATEDBY                MEDIUMTEXT ,
+  LASTUPDATEDATE                 TIME,
+  LASTUPDATEBY             MEDIUMTEXT ,
+ CONSTRAINT PK_SAPDETAILS PRIMARY KEY (ID)
+);
+CREATE TABLE SLOCNDTL 
+(
+  SLOCNID                      BIGINT         NOT NULL,
+  BRANCHCODE                CODECHAR4 ,
+  BUGROUPCODE               CODECHAR2 ,
+  SLOCNCODE                 CODECHAR3 ,
+  SLOCNDESC                MEDIUMTEXT NOT NULL,
+  ADDRESS                  MEDIUMTEXT NOT NULL,
+  ISACTIVE                BOOLEANTRUE ,
+  CREATEDDATE               TIMESTAMP,
+  CREATEDBY                MEDIUMTEXT ,
+  LASTUPDATEDATE            TIMESTAMP,
+  LASTUPDATEBY             MEDIUMTEXT ,
+ CONSTRAINT PK_SLOCNDTL PRIMARY KEY (SLOCNID)
+);
+CREATE TABLE STADMINUSER 
+(
+  USERID                    SHORTTEXT NOT NULL,
+  APPCODE                TEXTCODELONG ,
+  USERLEVEL                  SMALLINT         DEFAULT 0 NOT NULL,
+  ISACTIVE                BOOLEANTRUE ,
+  CREATEDDATE               TIMESTAMP,
+  CREATEDBY                MEDIUMTEXT ,
+  LASTUPDATEDATE            TIMESTAMP,
+  LASTUPDATEBY             MEDIUMTEXT ,
+ CONSTRAINT PK_STADMINUSER PRIMARY KEY (USERID)
+);
+CREATE TABLE STEMPUSERACCT 
+(
+  BADGENO                     BADGENO ,
+  USERACCTID                  INTEGER         NOT NULL,
+  CREATEDDATE               TIMESTAMP,
+  CREATEDBY                   VARCHAR(    50) CHARACTER SET NONE  COLLATE NONE,
+  LASTUPDATEDATE            TIMESTAMP,
+  LASTUPDATEBY                VARCHAR(    50) CHARACTER SET NONE  COLLATE NONE,
+ CONSTRAINT PK_STEMPUSERACCT PRIMARY KEY (BADGENO, USERACCTID)
+);
+CREATE TABLE STREQUIRE 
+(
+  STREQUIREID                SMALLINT         NOT NULL,
+  DESCRIPTION                LONGTEXT NOT NULL,
+  APPCODE                TEXTCODELONG ,
+  SUBAPPCODE             TEXTCODELONG ,
+  ISREQUIRED              BOOLEANTRUE ,
+  SEQNO                      SMALLINT         NOT NULL,
+  ISACTIVE                BOOLEANTRUE ,
+  CREATEDDATE               TIMESTAMP,
+  CREATEDBY                MEDIUMTEXT ,
+  LASTUPDATEDATE            TIMESTAMP,
+  LASTUPDATEBY             MEDIUMTEXT ,
+ CONSTRAINT PK_STREQUIRE PRIMARY KEY (STREQUIREID)
+);
+CREATE TABLE STROUTE 
+(
+  MASTERCODE             TEXTCODELONG ,
+  LEVELNO                    SMALLINT         NOT NULL,
+  ROLENO                     SMALLINT         NOT NULL,
+  LEVELROLE            TEXTCODELONGER ,
+  FUNCTIONID                 SMALLINT         NOT NULL,
+  FUNCTIONDESC             MEDIUMTEXT NOT NULL,
+  FUNCTIONNAME             MEDIUMTEXT NOT NULL,
+  ISACTIVE                BOOLEANTRUE ,
+  CREATEDDATE               TIMESTAMP,
+  CREATEDBY                MEDIUMTEXT ,
+  LASTUPDATEDATE            TIMESTAMP,
+  LASTUPDATEBY             MEDIUMTEXT ,
+ CONSTRAINT PK_STROUTE PRIMARY KEY (MASTERCODE, LEVELNO, ROLENO, FUNCTIONID)
+);
+CREATE TABLE STUSERINIT 
+(
+  BADGENO                     BADGENO ,
+  REFERENCEIDNO           SHORTERTEXT NOT NULL,
+  ACCTCREATED            BOOLEANFALSE ,
+  CREATEDDATE               TIMESTAMP,
+  CREATEDBY                MEDIUMTEXT ,
+  LASTUPDATEDATE            TIMESTAMP,
+  LASTUPDATEBY             MEDIUMTEXT ,
+ CONSTRAINT PK_STUSERINIT PRIMARY KEY (BADGENO, REFERENCEIDNO)
+);
+CREATE TABLE USERACCT 
+(
+  USERACCTID                  INTEGER         NOT NULL,
+  USERID                    SHORTTEXT NOT NULL,
+  USERPASSWD                SHORTTEXT NOT NULL,
+  ROLEID                     SMALLINT,
+  ISACTIVE                BOOLEANTRUE ,
+  CREATEDDATE               TIMESTAMP,
+  CREATEDBY                MEDIUMTEXT ,
+  LASTUPDATEDATE            TIMESTAMP,
+  LASTUPDATEBY             MEDIUMTEXT ,
+ CONSTRAINT PK_USERACCT PRIMARY KEY (USERACCTID)
+);
+CREATE TABLE USERROLE 
+(
+  USERID                    SHORTTEXT NOT NULL,
+  ROLECODE             TEXTCODELONGER ,
+  ISACTIVE                BOOLEANTRUE ,
+  CREATEDDATE               TIMESTAMP,
+  CREATEDBY                MEDIUMTEXT ,
+  LASTUPDATEDATE            TIMESTAMP,
+  LASTUPDATEBY             MEDIUMTEXT ,
+ CONSTRAINT PK_USERROLE PRIMARY KEY (USERID, ROLECODE)
+);
+/*******************************************************************************
+ * Unique Constraints
+ * ------------------
+ * Extracted at 8/3/2013 9:44:29 AM
+ ******************************************************************************/
+
+ALTER TABLE ADMENUMAST2 ADD CONSTRAINT U_ADMENUMAST2_ITEMNAME UNIQUE 
+  (ITEMNAME);
+
+ALTER TABLE ADMENUMAST ADD CONSTRAINT U_ADMENUMAST_ITEMNAME UNIQUE 
+  (ITEMNAME);
+
+ALTER TABLE ADROLEMAST ADD CONSTRAINT U_ADROLEMAST_DESC UNIQUE 
+  (ROLEDESC);
+
+ALTER TABLE ADROLEMAST ADD CONSTRAINT U_ADROLEMAST_SEQNO UNIQUE 
+  (APPCODE, SEQNO);
+
+ALTER TABLE EREQREQUIRE ADD CONSTRAINT U_EREQREQUIRE_REQITEM UNIQUE 
+  (HEADERID, STREQUIREID);
+
+ALTER TABLE EREQRMDTL ADD CONSTRAINT U_EREQRMDTL_ITEMCODE UNIQUE 
+  (HEADERID, ITEMCODE);
+
+ALTER TABLE LKBRANCHTYPE ADD CONSTRAINT U_LKBRANCHTYPE_DESC UNIQUE 
+  (BRANCHTYPEDESC);
+
+ALTER TABLE LKBRANCHTYPE ADD CONSTRAINT U_LKBRANCHTYPE_SEQNO UNIQUE 
+  (SEQNO);
+
+ALTER TABLE LKDEPARTMENT ADD CONSTRAINT U_LKDEPARTMENT_DEPTDESC UNIQUE 
+  (DEPARTMENTDESC);
+
+ALTER TABLE LKGENDTL ADD CONSTRAINT U_LKGENDTL_SEQNO UNIQUE 
+  (APPCODE, SUBAPPCODE, SEQNO);
+
+ALTER TABLE LKGENMASTER ADD CONSTRAINT U_LKGENMASTER_SEQNO UNIQUE 
+  (APPCODE, SEQNO);
+
+ALTER TABLE LKSTORELVL ADD CONSTRAINT U_LKSTORELVL_SEQNO UNIQUE 
+  (SEQNO);
+
+ALTER TABLE STREQUIRE ADD CONSTRAINT U_STREQUIRE_SEQNO UNIQUE 
+  (APPCODE, SUBAPPCODE, SEQNO);
+
+ALTER TABLE USERACCT ADD CONSTRAINT U_USERACCT UNIQUE 
+  (USERID);
+
+/*******************************************************************************
+ * Check Constraints
+ * -----------------
+ * Extracted at 8/3/2013 9:44:29 AM
+ ******************************************************************************/
+
+ALTER TABLE ADMENUMAST2 ADD CONSTRAINT C_ADMENUMAST2_ITEMLINK
+ CHECK (
+( (ITEMTYPE = 'M') AND (ITEMLINK IS NULL) ) OR ( (ITEMTYPE = 'P') AND (ITEMLINK IS NOT NULL) )
+);
+
+ALTER TABLE ADMENUMAST2 ADD CONSTRAINT C_ADMENUMAST2_ITEMTYPE
+ CHECK (
+ITEMTYPE in ('M', 'P')
+);
+
+ALTER TABLE ADMENUMAST ADD CONSTRAINT C_ADMENUMAST_ITEMLINK
+ CHECK (
+( (ITEMTYPE = 'M') AND (ITEMLINK IS NULL) ) OR ( (ITEMTYPE = 'P') AND (ITEMLINK IS NOT NULL) )
+);
+
+ALTER TABLE ADMENUMAST ADD CONSTRAINT C_ADMENUMAST_ITEMTYPE
+ CHECK (
+ITEMTYPE in ('M', 'P')
+);
+
+/*******************************************************************************
+ * Foreign Key Constraints
+ * -----------------------
+ * Extracted at 8/3/2013 9:44:29 AM
+ ******************************************************************************/
+
+ALTER TABLE ADROLEMENU ADD CONSTRAINT FK_ADROLEMENU_ADMENUMAST2 
+  FOREIGN KEY (MENUID) REFERENCES ADMENUMAST2
+  (MENUID) 
+  ON DELETE CASCADE
+  ON UPDATE CASCADE
+;
+
+ALTER TABLE ADROLEMENU ADD CONSTRAINT FK_ADROLEMENU_ADROLEMAST 
+  FOREIGN KEY (ROLECODE) REFERENCES ADROLEMAST
+  (ROLECODE) 
+  ON DELETE CASCADE
+  ON UPDATE CASCADE
+;
+
+ALTER TABLE BRANCHLVLHIST ADD CONSTRAINT FK_BRANCHLVLHIST_BRANCH 
+  FOREIGN KEY (BRANCHCODE, BUGROUPCODE) REFERENCES BRANCH
+  (BRANCHCODE, BUGROUPCODE) 
+  ON DELETE CASCADE
+  ON UPDATE CASCADE
+;
+
+ALTER TABLE BRANCHLVLHIST ADD CONSTRAINT FK_BRANCHLVLHIST_BRANCHMAIN 
+  FOREIGN KEY (MAINBRANCHCODE, MAINBUGROUPCODE) REFERENCES BRANCH
+  (BRANCHCODE, BUGROUPCODE) 
+  ON DELETE CASCADE
+  ON UPDATE CASCADE
+;
+
+ALTER TABLE BRANCHLVLHIST ADD CONSTRAINT FK_BRANCHLVLHIST_LKSTORELVL 
+  FOREIGN KEY (STORELVLCODE) REFERENCES LKSTORELVL
+  (STORELVLCODE) 
+  ON DELETE SET NULL
+  ON UPDATE CASCADE
+;
+
+ALTER TABLE BRANCH ADD CONSTRAINT FK_BRANCH_LKBRANCHTYPE 
+  FOREIGN KEY (BRANCHTYPECODE) REFERENCES LKBRANCHTYPE
+  (BRANCHTYPECODE) 
+  ON DELETE SET NULL
+  ON UPDATE CASCADE
+;
+
+ALTER TABLE BRANCH ADD CONSTRAINT FK_BRANCH_LKBUGROUP 
+  FOREIGN KEY (BUGROUPCODE) REFERENCES LKBUGROUP
+  (BUGROUPCODE) 
+  ON DELETE CASCADE
+  ON UPDATE CASCADE
+;
+
+ALTER TABLE BRANCH ADD CONSTRAINT FK_BRANCH_LKCOMPANY 
+  FOREIGN KEY (COMPANYCODE) REFERENCES LKCOMPANY
+  (COMPANYCODE) 
+  ON DELETE SET NULL
+  ON UPDATE CASCADE
+;
+
+ALTER TABLE BRANCH ADD CONSTRAINT FK_BRANCH_LKINSAPP 
+  FOREIGN KEY (INSAPPCODE) REFERENCES LKINSAPP
+  (INSAPPCODE) 
+  ON DELETE SET NULL
+  ON UPDATE CASCADE
+;
+
+ALTER TABLE BRANCH ADD CONSTRAINT FK_BRANCH_LKRCLUSTER 
+  FOREIGN KEY (RCLUSTERCODE) REFERENCES LKRCLUSTER
+  (RCLUSTERCODE) 
+  ON DELETE SET NULL
+  ON UPDATE CASCADE
+;
+
+ALTER TABLE BRANCH ADD CONSTRAINT FK_BRANCH_LKREGION 
+  FOREIGN KEY (REGIONCODE) REFERENCES LKREGION
+  (REGIONCODE) 
+  ON DELETE SET NULL
+  ON UPDATE CASCADE
+;
+
+ALTER TABLE BRANCH ADD CONSTRAINT FK_BRANCH_LKSBU 
+  FOREIGN KEY (SBUCODE) REFERENCES LKSBU
+  (SBUCODE) 
+  ON DELETE SET NULL
+  ON UPDATE CASCADE
+;
+
+ALTER TABLE BRANCH ADD CONSTRAINT FK_BRANCH_LKTRADENAME 
+  FOREIGN KEY (TRADENAMECODE) REFERENCES LKTRADENAME
+  (TRADENAMECODE) 
+  ON DELETE SET NULL
+  ON UPDATE CASCADE
+;
+
+ALTER TABLE BRANCH ADD CONSTRAINT FK_BRANCH_LKUCLUSTER 
+  FOREIGN KEY (UCLUSTERCODE) REFERENCES LKUCLUSTER
+  (UCLUSTERCODE) 
+  ON DELETE SET NULL
+  ON UPDATE CASCADE
+;
+
+ALTER TABLE BRANCH ADD CONSTRAINT FK_BRANCH_LKUSCLUSTER 
+  FOREIGN KEY (USCLUSTERCODE) REFERENCES LKUSCLUSTER
+  (USCLUSTERCODE) 
+  ON DELETE SET NULL
+  ON UPDATE CASCADE
+;
+
+ALTER TABLE BRCONTACTDTL ADD CONSTRAINT FK_BRCONTACTDTL_BRANCH 
+  FOREIGN KEY (BRANCHCODE, BUGROUPCODE) REFERENCES BRANCH
+  (BRANCHCODE, BUGROUPCODE) 
+  ON DELETE CASCADE
+  ON UPDATE CASCADE
+;
+
+ALTER TABLE BRCONTACTDTL ADD CONSTRAINT FK_BRCONTACTDTL_LKPOSITION 
+  FOREIGN KEY (POSITIONCODE) REFERENCES LKPOSITION
+  (POSITIONCODE) 
+  ON DELETE SET NULL
+  ON UPDATE CASCADE
+;
+
+ALTER TABLE EREQDOC ADD CONSTRAINT FK_EREQDOC_EREQUEST 
+  FOREIGN KEY (HEADERID) REFERENCES EREQUEST
+  (EREQUESTID) 
+  ON DELETE CASCADE
+  ON UPDATE CASCADE
+;
+
+ALTER TABLE EREQDOC ADD CONSTRAINT FK_EREQDOC_LKGENDTL_PURPOSE 
+  FOREIGN KEY (PURPOSECODE) REFERENCES LKGENDTL
+  (DTLCODE) 
+  ON DELETE SET NULL
+  ON UPDATE CASCADE
+;
+
+ALTER TABLE EREQDOC ADD CONSTRAINT FK_EREQDOC_LKGENDTL_TYPE 
+  FOREIGN KEY (DOCTYPECODE) REFERENCES LKGENDTL
+  (DTLCODE) 
+  ON DELETE SET NULL
+  ON UPDATE CASCADE
+;
+
+ALTER TABLE EREQFL ADD CONSTRAINT FK_EREQFL_EREQUEST 
+  FOREIGN KEY (HEADERID) REFERENCES EREQUEST
+  (EREQUESTID) 
+  ON DELETE CASCADE
+  ON UPDATE CASCADE
+;
+
+ALTER TABLE EREQFL ADD CONSTRAINT FK_EREQFL_LKGENDTL_BRAND 
+  FOREIGN KEY (ITEMBRAND) REFERENCES LKGENDTL
+  (DTLCODE) 
+  ON DELETE SET NULL
+  ON UPDATE CASCADE
+;
+
+ALTER TABLE EREQFL ADD CONSTRAINT FK_EREQFL_LKGENDTL_ITEM 
+  FOREIGN KEY (ITEMCODE) REFERENCES LKGENDTL
+  (DTLCODE) 
+  ON DELETE SET NULL
+  ON UPDATE CASCADE
+;
+
+ALTER TABLE EREQFL ADD CONSTRAINT FK_EREQFL_LKGENDTL_MCMAKE 
+  FOREIGN KEY (MCMAKECODE) REFERENCES LKGENDTL
+  (DTLCODE) 
+  ON DELETE SET NULL
+  ON UPDATE CASCADE
+;
+
+ALTER TABLE EREQFL ADD CONSTRAINT FK_EREQFL_LKGENDTL_SUTYPE 
+  FOREIGN KEY (SUTYPE) REFERENCES LKGENDTL
+  (DTLCODE) 
+  ON DELETE SET NULL
+  ON UPDATE CASCADE
+;
+
+ALTER TABLE EREQFRMDTL ADD CONSTRAINT FK_EREQFRMDTL_EREQUEST 
+  FOREIGN KEY (HEADERID) REFERENCES EREQUEST
+  (EREQUESTID) 
+  ON DELETE CASCADE
+  ON UPDATE CASCADE
+;
+
+ALTER TABLE EREQFRMDTL ADD CONSTRAINT FK_EREQFRMDTL_LKGENDTL 
+  FOREIGN KEY (ITEMCODE) REFERENCES LKGENDTL
+  (DTLCODE) 
+  ON DELETE SET NULL
+  ON UPDATE CASCADE
+;
+
+ALTER TABLE EREQFRM ADD CONSTRAINT FK_EREQFRM_EREQUEST 
+  FOREIGN KEY (HEADERID) REFERENCES EREQUEST
+  (EREQUESTID) 
+  ON DELETE CASCADE
+  ON UPDATE CASCADE
+;
+
+ALTER TABLE EREQHIST ADD CONSTRAINT FK_EREQHIST_EREQUEST 
+  FOREIGN KEY (HEADERID) REFERENCES EREQUEST
+  (EREQUESTID) 
+  ON DELETE CASCADE
+  ON UPDATE CASCADE
+;
+
+ALTER TABLE EREQPRE ADD CONSTRAINT FK_EREQPRE_EREQUEST 
+  FOREIGN KEY (HEADERID) REFERENCES EREQUEST
+  (EREQUESTID) 
+  ON DELETE CASCADE
+  ON UPDATE CASCADE
+;
+
+ALTER TABLE EREQREQUIRE ADD CONSTRAINT FK_EREQREQUIRE_EREQUEST 
+  FOREIGN KEY (HEADERID) REFERENCES EREQUEST
+  (EREQUESTID) 
+  ON DELETE CASCADE
+  ON UPDATE CASCADE
+;
+
+ALTER TABLE EREQREQUIRE ADD CONSTRAINT FK_EREQREQUIRE_STREQUIRE 
+  FOREIGN KEY (STREQUIREID) REFERENCES STREQUIRE
+  (STREQUIREID) 
+  ON DELETE SET NULL
+  ON UPDATE CASCADE
+;
+
+ALTER TABLE EREQRES ADD CONSTRAINT FK_EREQRES_EREQUEST 
+  FOREIGN KEY (HEADERID) REFERENCES EREQUEST
+  (EREQUESTID) 
+  ON DELETE CASCADE
+  ON UPDATE CASCADE
+;
+
+ALTER TABLE EREQRES ADD CONSTRAINT FK_EREQRES_LKGENDTL_REQTYPE 
+  FOREIGN KEY (REQTYPECODE) REFERENCES LKGENDTL
+  (DTLCODE) 
+  ON DELETE SET NULL
+  ON UPDATE CASCADE
+;
+
+ALTER TABLE EREQRMDTL ADD CONSTRAINT FK_EREQRMDTL_EREQUEST 
+  FOREIGN KEY (HEADERID) REFERENCES EREQUEST
+  (EREQUESTID) 
+  ON DELETE CASCADE
+  ON UPDATE CASCADE
+;
+
+ALTER TABLE EREQRMDTL ADD CONSTRAINT FK_EREQRMDTL_LKGENDTL 
+  FOREIGN KEY (ITEMCODE) REFERENCES LKGENDTL
+  (DTLCODE) 
+  ON DELETE SET NULL
+  ON UPDATE CASCADE
+;
+
+ALTER TABLE EREQRM ADD CONSTRAINT FK_EREQRM_EREQUEST 
+  FOREIGN KEY (HEADERID) REFERENCES EREQUEST
+  (EREQUESTID) 
+  ON DELETE CASCADE
+  ON UPDATE CASCADE
+;
+
+ALTER TABLE EREQRM ADD CONSTRAINT FK_EREQRM_LKGENDTL_MCMAKE 
+  FOREIGN KEY (MCMAKECODE) REFERENCES LKGENDTL
+  (DTLCODE) 
+  ON DELETE SET NULL
+  ON UPDATE CASCADE
+;
+
+ALTER TABLE EREQRM ADD CONSTRAINT FK_EREQRM_LKGENDTL_SUTYPE 
+  FOREIGN KEY (SUTYPE) REFERENCES LKGENDTL
+  (DTLCODE) 
+  ON DELETE SET NULL
+  ON UPDATE CASCADE
+;
+
+ALTER TABLE EREQSA ADD CONSTRAINT FK_EREQSA_EREQUEST 
+  FOREIGN KEY (HEADERID) REFERENCES EREQUEST
+  (EREQUESTID) 
+  ON DELETE CASCADE
+  ON UPDATE CASCADE
+;
+
+ALTER TABLE EREQUEST ADD CONSTRAINT FK_EREQUEST_LKGENMASTER 
+  FOREIGN KEY (REQUESTCODE) REFERENCES LKGENMASTER
+  (MASTERCODE) 
+  ON DELETE SET NULL
+  ON UPDATE CASCADE
+;
+
+ALTER TABLE LEASEINFODTL ADD CONSTRAINT FK_LEASEINFODTL_BRANCH 
+  FOREIGN KEY (BRANCHCODE, BUGROUPCODE) REFERENCES BRANCH
+  (BRANCHCODE, BUGROUPCODE) 
+  ON DELETE CASCADE
+  ON UPDATE CASCADE
+;
+
+ALTER TABLE LKUSCLUSTER ADD CONSTRAINT FK_LKUSCLUSTER_LKUCLUSTER 
+  FOREIGN KEY (UCLUSTERCODE) REFERENCES LKUCLUSTER
+  (UCLUSTERCODE) 
+  ON DELETE SET NULL
+  ON UPDATE CASCADE
+;
+
+ALTER TABLE SAPDETAILS ADD CONSTRAINT FK_SAPDETAILS_BRANCH 
+  FOREIGN KEY (BRANCHCODE, BUGROUPCODE) REFERENCES BRANCH
+  (BRANCHCODE, BUGROUPCODE) 
+  ON DELETE CASCADE
+  ON UPDATE CASCADE
+;
+
+ALTER TABLE SLOCNDTL ADD CONSTRAINT FK_SLOCNDTL_BRANCH 
+  FOREIGN KEY (BRANCHCODE, BUGROUPCODE) REFERENCES BRANCH
+  (BRANCHCODE, BUGROUPCODE) 
+  ON DELETE CASCADE
+  ON UPDATE CASCADE
+;
+
+ALTER TABLE STEMPUSERACCT ADD CONSTRAINT FK_STEMPUSERACCT_USERACCT 
+  FOREIGN KEY (USERACCTID) REFERENCES USERACCT
+  (USERACCTID) 
+  ON DELETE CASCADE
+  ON UPDATE CASCADE
+;
+
+ALTER TABLE STROUTE ADD CONSTRAINT FK_STROUTE_ADROLEMAST 
+  FOREIGN KEY (LEVELROLE) REFERENCES ADROLEMAST
+  (ROLECODE) 
+  ON DELETE SET NULL
+  ON UPDATE CASCADE
+;
+
+ALTER TABLE STROUTE ADD CONSTRAINT FK_STROUTE_LKGENMASTER 
+  FOREIGN KEY (MASTERCODE) REFERENCES LKGENMASTER
+  (MASTERCODE) 
+  ON DELETE CASCADE
+  ON UPDATE CASCADE
+;
+
+ALTER TABLE USERROLE ADD CONSTRAINT FK_USERROLE_ADROLEMAST 
+  FOREIGN KEY (ROLECODE) REFERENCES ADROLEMAST
+  (ROLECODE) 
+  ON DELETE SET NULL
+  ON UPDATE CASCADE
+;
+
+/*******************************************************************************
+ * Triggers
+ * --------
+ * Extracted at 8/3/2013 9:44:30 AM
+ ******************************************************************************/
+
+/*******************************************************************************
+ * Trigger ADROLEMAST_CREATED on table/view ADROLEMAST
+ ******************************************************************************/
+
+SET TERM ^^ ;
+CREATE TRIGGER ADROLEMAST_CREATED FOR ADROLEMAST ACTIVE BEFORE INSERT POSITION 0 AS
+/*
+  You can change this template in the template editor:
+  File | Preferences | Object Templates
+
+  Trigger:
+
+  Author   : , 
+  Date     : 7/14/2013 10:58:36 PM
+  Purpose  :
+*/
+begin
+  NEW.CREATEDDATE = 'NOW';
+  NEW.CREATEDBY = user;
+end ^^
+SET TERM ; ^^
+/*******************************************************************************
+ * Trigger ADROLEMAST_UPDATED on table/view ADROLEMAST
+ ******************************************************************************/
+
+SET TERM ^^ ;
+CREATE TRIGGER ADROLEMAST_UPDATED FOR ADROLEMAST ACTIVE BEFORE UPDATE POSITION 0 AS
+/*
+  You can change this template in the template editor:
+  File | Preferences | Object Templates
+
+  Trigger:
+
+  Author   : , 
+  Date     : 7/14/2013 10:59:12 PM
+  Purpose  :
+*/
+begin
+  NEW.LASTUPDATEDATE = 'NOW';
+  NEW.LASTUPDATEBY = user;
+end ^^
+SET TERM ; ^^
+/*******************************************************************************
+ * Trigger ADROLEMENU_CREATED on table/view ADROLEMENU
+ ******************************************************************************/
+
+SET TERM ^^ ;
+CREATE TRIGGER ADROLEMENU_CREATED FOR ADROLEMENU ACTIVE BEFORE INSERT POSITION 0 AS
+/*
+  You can change this template in the template editor:
+  File | Preferences | Object Templates
+
+  Trigger:
+
+  Author   : , 
+  Date     : 7/17/2013 4:59:02 PM
+  Purpose  :
+*/
+begin
+  NEW.CREATEDDATE = 'NOW';
+  NEW.CREATEDBY = user;
+end ^^
+SET TERM ; ^^
+/*******************************************************************************
+ * Trigger ADROLEMENU_UPDATED on table/view ADROLEMENU
+ ******************************************************************************/
+
+SET TERM ^^ ;
+CREATE TRIGGER ADROLEMENU_UPDATED FOR ADROLEMENU ACTIVE BEFORE UPDATE POSITION 0 AS
+/*
+  You can change this template in the template editor:
+  File | Preferences | Object Templates
+
+  Trigger:
+
+  Author   : , 
+  Date     : 7/17/2013 4:59:02 PM
+  Purpose  :
+*/
+begin
+  NEW.LASTUPDATEDATE = 'NOW';
+  NEW.LASTUPDATEBY = user;
+end ^^
+SET TERM ; ^^
+/*******************************************************************************
+ * Trigger BRANCHLVLHIST_ID on table/view BRANCHLVLHIST
+ ******************************************************************************/
+
+SET TERM ^^ ;
+CREATE TRIGGER BRANCHLVLHIST_ID FOR BRANCHLVLHIST ACTIVE BEFORE INSERT POSITION 0 AS
+/*
+  You can change this template in the template editor:
+  File | Preferences | Object Templates
+*/
+begin
+  if ( (new.BRANCHLVLHISTID is null) or (new.BRANCHLVLHISTID = 0) )
+  then new.BRANCHLVLHISTID = gen_id(BRANCHLVLHIST_GEN, 1);
+end ^^
+SET TERM ; ^^
+/*******************************************************************************
+ * Trigger BRANCH_ID on table/view BRANCH
+ ******************************************************************************/
+
+SET TERM ^^ ;
+CREATE TRIGGER BRANCH_ID FOR BRANCH ACTIVE BEFORE INSERT POSITION 0 AS
+/*
+  You can change this template in the template editor:
+  File | Preferences | Object Templates
+*/
+begin
+  if ( (new.BRANCHID is null) or (new.BRANCHID = 0) )
+  then new.BRANCHID = gen_id(BRANCH_GEN, 1);
+end ^^
+SET TERM ; ^^
+/*******************************************************************************
+ * Trigger BRCONTACTDTL_ID on table/view BRCONTACTDTL
+ ******************************************************************************/
+
+SET TERM ^^ ;
+CREATE TRIGGER BRCONTACTDTL_ID FOR BRCONTACTDTL ACTIVE BEFORE INSERT POSITION 0 AS
+/*
+  You can change this template in the template editor:
+  File | Preferences | Object Templates
+*/
+begin
+  if ( (new.BRCONTACTID is null) or (new.BRCONTACTID = 0) )
+  then new.BRCONTACTID = gen_id(BRCONTACTDTL_GEN, 1);
+end ^^
+SET TERM ; ^^
+/*******************************************************************************
+ * Trigger EREQDOC_CREATED on table/view EREQDOC
+ ******************************************************************************/
+
+SET TERM ^^ ;
+CREATE TRIGGER EREQDOC_CREATED FOR EREQDOC ACTIVE BEFORE INSERT POSITION 1 AS
+/*
+  You can change this template in the template editor:
+  File | Preferences | Object Templates
+
+  Trigger:
+
+  Author   : , 
+  Date     : 7/25/2013 3:46:40 PM
+  Purpose  :
+*/
+begin
+  NEW.CREATEDDATE = 'NOW';
+  NEW.CREATEDBY = user;
+end ^^
+SET TERM ; ^^
+/*******************************************************************************
+ * Trigger EREQDOC_ID on table/view EREQDOC
+ ******************************************************************************/
+
+SET TERM ^^ ;
+CREATE TRIGGER EREQDOC_ID FOR EREQDOC ACTIVE BEFORE INSERT POSITION 0 AS
+/*
+  You can change this template in the template editor:
+  File | Preferences | Object Templates
+*/
+begin
+  if ( (new.EREQDTLID is null) or (new.EREQDTLID = 0) )
+  then new.EREQDTLID = gen_id(EREQDOC_GEN, 1);
+end ^^
+SET TERM ; ^^
+/*******************************************************************************
+ * Trigger EREQDOC_UPDATED on table/view EREQDOC
+ ******************************************************************************/
+
+SET TERM ^^ ;
+CREATE TRIGGER EREQDOC_UPDATED FOR EREQDOC ACTIVE BEFORE UPDATE POSITION 0 AS
+/*
+  You can change this template in the template editor:
+  File | Preferences | Object Templates
+
+  Trigger:
+
+  Author   : , 
+  Date     : 7/25/2013 3:46:40 PM
+  Purpose  :
+*/
+begin
+  NEW.LASTUPDATEDATE = 'NOW';
+  NEW.LASTUPDATEBY = user;
+end ^^
+SET TERM ; ^^
+/*******************************************************************************
+ * Trigger EREQFL_CREATED on table/view EREQFL
+ ******************************************************************************/
+
+SET TERM ^^ ;
+CREATE TRIGGER EREQFL_CREATED FOR EREQFL ACTIVE BEFORE INSERT POSITION 1 AS
+/*
+  You can change this template in the template editor:
+  File | Preferences | Object Templates
+
+  Trigger:
+
+  Author   : , 
+  Date     : 7/19/2013 4:15:44 PM
+  Purpose  :
+*/
+begin
+  NEW.CREATEDDATE = 'NOW';
+  NEW.CREATEDBY = user;
+end ^^
+SET TERM ; ^^
+/*******************************************************************************
+ * Trigger EREQFL_ID on table/view EREQFL
+ ******************************************************************************/
+
+SET TERM ^^ ;
+CREATE TRIGGER EREQFL_ID FOR EREQFL ACTIVE BEFORE INSERT POSITION 0 AS
+/*
+  You can change this template in the template editor:
+  File | Preferences | Object Templates
+*/
+begin
+  if ( (new.EREQDTLID is null) or (new.EREQDTLID = 0) )
+  then new.EREQDTLID = gen_id(EREQFL_GEN, 1);
+end ^^
+SET TERM ; ^^
+/*******************************************************************************
+ * Trigger EREQFL_UPDATED on table/view EREQFL
+ ******************************************************************************/
+
+SET TERM ^^ ;
+CREATE TRIGGER EREQFL_UPDATED FOR EREQFL ACTIVE BEFORE UPDATE POSITION 0 AS
+/*
+  You can change this template in the template editor:
+  File | Preferences | Object Templates
+
+  Trigger:
+
+  Author   : , 
+  Date     : 7/19/2013 4:17:27 PM
+  Purpose  :
+*/
+begin
+  NEW.LASTUPDATEDATE = 'NOW';
+  NEW.LASTUPDATEBY = user;
+end ^^
+SET TERM ; ^^
+/*******************************************************************************
+ * Trigger EREQFRMDTL_CREATED on table/view EREQFRMDTL
+ ******************************************************************************/
+
+SET TERM ^^ ;
+CREATE TRIGGER EREQFRMDTL_CREATED FOR EREQFRMDTL ACTIVE BEFORE INSERT POSITION 0 AS
+/*
+  You can change this template in the template editor:
+  File | Preferences | Object Templates
+
+  Trigger:
+
+  Author   : , 
+  Date     : 7/26/2013 9:19:21 AM
+  Purpose  :
+*/
+begin
+  NEW.CREATEDDATE = 'NOW';
+  NEW.CREATEDBY = user;
+end ^^
+SET TERM ; ^^
+/*******************************************************************************
+ * Trigger EREQFRMDTL_UPDATED on table/view EREQFRMDTL
+ ******************************************************************************/
+
+SET TERM ^^ ;
+CREATE TRIGGER EREQFRMDTL_UPDATED FOR EREQFRMDTL ACTIVE BEFORE UPDATE POSITION 0 AS
+/*
+  You can change this template in the template editor:
+  File | Preferences | Object Templates
+
+  Trigger:
+
+  Author   : , 
+  Date     : 7/26/2013 9:19:21 AM
+  Purpose  :
+*/
+begin
+  NEW.LASTUPDATEDATE = 'NOW';
+  NEW.LASTUPDATEBY = user;
+end ^^
+SET TERM ; ^^
+/*******************************************************************************
+ * Trigger EREQFRM_CREATED on table/view EREQFRM
+ ******************************************************************************/
+
+SET TERM ^^ ;
+CREATE TRIGGER EREQFRM_CREATED FOR EREQFRM ACTIVE BEFORE INSERT POSITION 1 AS
+/*
+  You can change this template in the template editor:
+  File | Preferences | Object Templates
+
+  Trigger:
+
+  Author   : , 
+  Date     : 7/25/2013 6:22:48 PM
+  Purpose  :
+*/
+begin
+  NEW.CREATEDDATE = 'NOW';
+  NEW.CREATEDBY = user;
+end ^^
+SET TERM ; ^^
+/*******************************************************************************
+ * Trigger EREQFRM_ID on table/view EREQFRM
+ ******************************************************************************/
+
+SET TERM ^^ ;
+CREATE TRIGGER EREQFRM_ID FOR EREQFRM ACTIVE BEFORE INSERT POSITION 0 AS
+/*
+  You can change this template in the template editor:
+  File | Preferences | Object Templates
+*/
+begin
+  if ( (new.EREQDTLID is null) or (new.EREQDTLID = 0) )
+  then new.EREQDTLID = gen_id(EREQFRM_GEN, 1);
+end ^^
+SET TERM ; ^^
+/*******************************************************************************
+ * Trigger EREQFRM_UPDATED on table/view EREQFRM
+ ******************************************************************************/
+
+SET TERM ^^ ;
+CREATE TRIGGER EREQFRM_UPDATED FOR EREQFRM ACTIVE BEFORE UPDATE POSITION 0 AS
+/*
+  You can change this template in the template editor:
+  File | Preferences | Object Templates
+
+  Trigger:
+
+  Author   : , 
+  Date     : 7/25/2013 6:22:48 PM
+  Purpose  :
+*/
+begin
+  NEW.LASTUPDATEDATE = 'NOW';
+  NEW.LASTUPDATEBY = user;
+end ^^
+SET TERM ; ^^
+/*******************************************************************************
+ * Trigger EREQHIST_CREATED on table/view EREQHIST
+ ******************************************************************************/
+
+SET TERM ^^ ;
+CREATE TRIGGER EREQHIST_CREATED FOR EREQHIST ACTIVE BEFORE INSERT POSITION 1 AS
+/*
+  You can change this template in the template editor:
+  File | Preferences | Object Templates
+
+  Trigger:
+
+  Author   : , 
+  Date     : 7/19/2013 6:43:45 PM
+  Purpose  :
+*/
+begin
+     NEW.CREATEDDATE = 'NOW';
+     NEW.CREATEDBY = user;
+end ^^
+SET TERM ; ^^
+/*******************************************************************************
+ * Trigger EREQHIST_ID on table/view EREQHIST
+ ******************************************************************************/
+
+SET TERM ^^ ;
+CREATE TRIGGER EREQHIST_ID FOR EREQHIST ACTIVE BEFORE INSERT POSITION 0 AS
+/*
+  You can change this template in the template editor:
+  File | Preferences | Object Templates
+*/
+begin
+  if ( (new.EREQHISTID is null) or (new.EREQHISTID = 0) )
+  then new.EREQHISTID = gen_id(EREQHISTID_GEN, 1);
+end ^^
+SET TERM ; ^^
+/*******************************************************************************
+ * Trigger EREQHIST_UPDATED on table/view EREQHIST
+ ******************************************************************************/
+
+SET TERM ^^ ;
+CREATE TRIGGER EREQHIST_UPDATED FOR EREQHIST ACTIVE BEFORE UPDATE POSITION 0 AS
+/*
+  You can change this template in the template editor:
+  File | Preferences | Object Templates
+
+  Trigger:
+
+  Author   : , 
+  Date     : 7/19/2013 6:43:45 PM
+  Purpose  :
+*/
+begin
+     NEW.LASTUPDATEDATE = 'NOW';
+     NEW.LASTUPDATEBY = user;
+end ^^
+SET TERM ; ^^
+/*******************************************************************************
+ * Trigger EREQPRE_CREATED on table/view EREQPRE
+ ******************************************************************************/
+
+SET TERM ^^ ;
+CREATE TRIGGER EREQPRE_CREATED FOR EREQPRE ACTIVE BEFORE INSERT POSITION 1 AS
+/*
+  You can change this template in the template editor:
+  File | Preferences | Object Templates
+
+  Trigger:
+
+  Author   : , 
+  Date     : 7/24/2013 2:13:00 PM
+  Purpose  :
+*/
+begin
+  NEW.CREATEDDATE = 'NOW';
+  NEW.CREATEDBY = user;
+end ^^
+SET TERM ; ^^
+/*******************************************************************************
+ * Trigger EREQPRE_ID on table/view EREQPRE
+ ******************************************************************************/
+
+SET TERM ^^ ;
+CREATE TRIGGER EREQPRE_ID FOR EREQPRE ACTIVE BEFORE INSERT POSITION 0 AS
+/*
+  You can change this template in the template editor:
+  File | Preferences | Object Templates
+*/
+begin
+  if ( (new.EREQDTLID is null) or (new.EREQDTLID = 0) )
+  then new.EREQDTLID = gen_id(EREQPRE_GEN, 1);
+end ^^
+SET TERM ; ^^
+/*******************************************************************************
+ * Trigger EREQPRE_UPDATED on table/view EREQPRE
+ ******************************************************************************/
+
+SET TERM ^^ ;
+CREATE TRIGGER EREQPRE_UPDATED FOR EREQPRE ACTIVE BEFORE UPDATE POSITION 0 AS
+/*
+  You can change this template in the template editor:
+  File | Preferences | Object Templates
+
+  Trigger:
+
+  Author   : , 
+  Date     : 7/24/2013 2:13:36 PM
+  Purpose  :
+*/
+begin
+  NEW.LASTUPDATEDATE = 'NOW';
+  NEW.LASTUPDATEBY = user;
+end ^^
+SET TERM ; ^^
+/*******************************************************************************
+ * Trigger EREQREQUIRE_CREATED on table/view EREQREQUIRE
+ ******************************************************************************/
+
+SET TERM ^^ ;
+CREATE TRIGGER EREQREQUIRE_CREATED FOR EREQREQUIRE ACTIVE BEFORE INSERT POSITION 1 AS
+/*
+  You can change this template in the template editor:
+  File | Preferences | Object Templates
+
+  Trigger:
+
+  Author   : , 
+  Date     : 7/23/2013 10:41:48 AM
+  Purpose  :
+*/
+begin
+     NEW.CREATEDDATE = 'NOW';
+     NEW.CREATEDBY = user;
+end ^^
+SET TERM ; ^^
+/*******************************************************************************
+ * Trigger EREQREQUIRE_ID on table/view EREQREQUIRE
+ ******************************************************************************/
+
+SET TERM ^^ ;
+CREATE TRIGGER EREQREQUIRE_ID FOR EREQREQUIRE ACTIVE BEFORE INSERT POSITION 0 AS
+/*
+  You can change this template in the template editor:
+  File | Preferences | Object Templates
+*/
+begin
+  if ( (new.REQUIREID is null) or (new.REQUIREID = 0) )
+  then new.REQUIREID = gen_id(EREQREQUIRE_GEN, 1);
+end ^^
+SET TERM ; ^^
+/*******************************************************************************
+ * Trigger EREQREQUIRE_UPDATED on table/view EREQREQUIRE
+ ******************************************************************************/
+
+SET TERM ^^ ;
+CREATE TRIGGER EREQREQUIRE_UPDATED FOR EREQREQUIRE ACTIVE BEFORE UPDATE POSITION 0 AS
+/*
+  You can change this template in the template editor:
+  File | Preferences | Object Templates
+
+  Trigger:
+
+  Author   : , 
+  Date     : 7/23/2013 10:42:14 AM
+  Purpose  :
+*/
+begin
+     NEW.LASTUPDATEDATE = 'NOW';
+     NEW.LASTUPDATEBY = user;
+end ^^
+SET TERM ; ^^
+/*******************************************************************************
+ * Trigger EREQRES_CREATED on table/view EREQRES
+ ******************************************************************************/
+
+SET TERM ^^ ;
+CREATE TRIGGER EREQRES_CREATED FOR EREQRES ACTIVE BEFORE INSERT POSITION 1 AS
+/*
+  You can change this template in the template editor:
+  File | Preferences | Object Templates
+
+  Trigger:
+
+  Author   : , 
+  Date     : 7/24/2013 6:29:44 PM
+  Purpose  :
+*/
+begin
+  NEW.CREATEDDATE = 'NOW';
+  NEW.CREATEDBY = user;
+end ^^
+SET TERM ; ^^
+/*******************************************************************************
+ * Trigger EREQRES_ID on table/view EREQRES
+ ******************************************************************************/
+
+SET TERM ^^ ;
+CREATE TRIGGER EREQRES_ID FOR EREQRES ACTIVE BEFORE INSERT POSITION 0 AS
+/*
+  You can change this template in the template editor:
+  File | Preferences | Object Templates
+*/
+begin
+  if ( (new.EREQDTLID is null) or (new.EREQDTLID = 0) )
+  then new.EREQDTLID = gen_id(EREQRES_GEN, 1);
+end ^^
+SET TERM ; ^^
+/*******************************************************************************
+ * Trigger EREQRES_UPDATED on table/view EREQRES
+ ******************************************************************************/
+
+SET TERM ^^ ;
+CREATE TRIGGER EREQRES_UPDATED FOR EREQRES ACTIVE BEFORE UPDATE POSITION 0 AS
+/*
+  You can change this template in the template editor:
+  File | Preferences | Object Templates
+
+  Trigger:
+
+  Author   : , 
+  Date     : 7/24/2013 6:29:44 PM
+  Purpose  :
+*/
+begin
+  NEW.LASTUPDATEDATE = 'NOW';
+  NEW.LASTUPDATEBY = user;
+end ^^
+SET TERM ; ^^
+/*******************************************************************************
+ * Trigger EREQRMDTL_CREATED on table/view EREQRMDTL
+ ******************************************************************************/
+
+SET TERM ^^ ;
+CREATE TRIGGER EREQRMDTL_CREATED FOR EREQRMDTL ACTIVE BEFORE INSERT POSITION 0 AS
+/*
+  You can change this template in the template editor:
+  File | Preferences | Object Templates
+
+  Trigger:
+
+  Author   : , 
+  Date     : 7/23/2013 11:53:24 AM
+  Purpose  :
+*/
+begin
+  NEW.CREATEDDATE = 'NOW';
+  NEW.CREATEDBY = user;
+end ^^
+SET TERM ; ^^
+/*******************************************************************************
+ * Trigger EREQRMDTL_UPDATED on table/view EREQRMDTL
+ ******************************************************************************/
+
+SET TERM ^^ ;
+CREATE TRIGGER EREQRMDTL_UPDATED FOR EREQRMDTL ACTIVE BEFORE UPDATE POSITION 0 AS
+/*
+  You can change this template in the template editor:
+  File | Preferences | Object Templates
+
+  Trigger:
+
+  Author   : , 
+  Date     : 7/23/2013 11:53:50 AM
+  Purpose  :
+*/
+begin
+  NEW.LASTUPDATEDATE = 'NOW';
+  NEW.LASTUPDATEBY = user;
+end ^^
+SET TERM ; ^^
+/*******************************************************************************
+ * Trigger EREQRM_CREATED on table/view EREQRM
+ ******************************************************************************/
+
+SET TERM ^^ ;
+CREATE TRIGGER EREQRM_CREATED FOR EREQRM ACTIVE BEFORE INSERT POSITION 1 AS
+/*
+  You can change this template in the template editor:
+  File | Preferences | Object Templates
+
+  Trigger:
+
+  Author   : , 
+  Date     : 7/22/2013 4:52:40 PM
+  Purpose  :
+*/
+begin
+  NEW.CREATEDDATE = 'NOW';
+  NEW.CREATEDBY = user;
+end ^^
+SET TERM ; ^^
+/*******************************************************************************
+ * Trigger EREQRM_ID on table/view EREQRM
+ ******************************************************************************/
+
+SET TERM ^^ ;
+CREATE TRIGGER EREQRM_ID FOR EREQRM ACTIVE BEFORE INSERT POSITION 0 AS
+/*
+  You can change this template in the template editor:
+  File | Preferences | Object Templates
+*/
+begin
+  if ( (new.EREQDTLID is null) or (new.EREQDTLID = 0) )
+  then new.EREQDTLID = gen_id(EREQRM_GEN, 1);
+end ^^
+SET TERM ; ^^
+/*******************************************************************************
+ * Trigger EREQRM_UPDATED on table/view EREQRM
+ ******************************************************************************/
+
+SET TERM ^^ ;
+CREATE TRIGGER EREQRM_UPDATED FOR EREQRM ACTIVE BEFORE UPDATE POSITION 0 AS
+/*
+  You can change this template in the template editor:
+  File | Preferences | Object Templates
+
+  Trigger:
+
+  Author   : , 
+  Date     : 7/22/2013 4:52:40 PM
+  Purpose  :
+*/
+begin
+  NEW.LASTUPDATEDATE = 'NOW';
+  NEW.LASTUPDATEBY = user;
+end ^^
+SET TERM ; ^^
+/*******************************************************************************
+ * Trigger EREQSA_CREATED on table/view EREQSA
+ ******************************************************************************/
+
+SET TERM ^^ ;
+CREATE TRIGGER EREQSA_CREATED FOR EREQSA ACTIVE BEFORE INSERT POSITION 1 AS
+/*
+  You can change this template in the template editor:
+  File | Preferences | Object Templates
+
+  Trigger:
+
+  Author   : , 
+  Date     : 7/25/2013 5:40:49 PM
+  Purpose  :
+*/
+begin
+  NEW.CREATEDDATE = 'NOW';
+  NEW.CREATEDBY = user;
+end ^^
+SET TERM ; ^^
+/*******************************************************************************
+ * Trigger EREQSA_ID on table/view EREQSA
+ ******************************************************************************/
+
+SET TERM ^^ ;
+CREATE TRIGGER EREQSA_ID FOR EREQSA ACTIVE BEFORE INSERT POSITION 0 AS
+/*
+  You can change this template in the template editor:
+  File | Preferences | Object Templates
+*/
+begin
+  if ( (new.EREQDTLID is null) or (new.EREQDTLID = 0) )
+  then new.EREQDTLID = gen_id(EREQSA_GEN, 1);
+end ^^
+SET TERM ; ^^
+/*******************************************************************************
+ * Trigger EREQSA_UPDATED on table/view EREQSA
+ ******************************************************************************/
+
+SET TERM ^^ ;
+CREATE TRIGGER EREQSA_UPDATED FOR EREQSA ACTIVE BEFORE UPDATE POSITION 0 AS
+/*
+  You can change this template in the template editor:
+  File | Preferences | Object Templates
+
+  Trigger:
+
+  Author   : , 
+  Date     : 7/25/2013 5:40:49 PM
+  Purpose  :
+*/
+begin
+  NEW.LASTUPDATEDATE = 'NOW';
+  NEW.LASTUPDATEBY = user;
+end ^^
+SET TERM ; ^^
+/*******************************************************************************
+ * Trigger EREQUEST_CREATED on table/view EREQUEST
+ ******************************************************************************/
+
+SET TERM ^^ ;
+CREATE TRIGGER EREQUEST_CREATED FOR EREQUEST INACTIVE BEFORE INSERT POSITION 1 AS
+/*
+  You can change this template in the template editor:
+  File | Preferences | Object Templates
+
+  Trigger:
+
+  Author   : , 
+  Date     : 7/18/2013 1:58:09 PM
+  Purpose  :
+*/
+begin
+  NEW.CREATEDDATE = 'NOW';
+  NEW.CREATEDBY = user;
+end ^^
+SET TERM ; ^^
+/*******************************************************************************
+ * Trigger EREQUEST_ID on table/view EREQUEST
+ ******************************************************************************/
+
+SET TERM ^^ ;
+CREATE TRIGGER EREQUEST_ID FOR EREQUEST ACTIVE BEFORE INSERT POSITION 0 AS
+/*
+  You can change this template in the template editor:
+  File | Preferences | Object Templates
+*/
+begin
+  if ( (new.EREQUESTID is null) or (new.EREQUESTID = 0) )
+  then new.EREQUESTID = gen_id(EREQUEST_GEN, 1);
+end ^^
+SET TERM ; ^^
+/*******************************************************************************
+ * Trigger EREQUEST_UPDATED on table/view EREQUEST
+ ******************************************************************************/
+
+SET TERM ^^ ;
+CREATE TRIGGER EREQUEST_UPDATED FOR EREQUEST ACTIVE BEFORE UPDATE POSITION 0 AS
+/*
+  You can change this template in the template editor:
+  File | Preferences | Object Templates
+
+  Trigger:
+
+  Author   : , 
+  Date     : 7/18/2013 1:58:41 PM
+  Purpose  :
+*/
+begin
+  NEW.LASTUPDATEDATE = 'NOW';
+  NEW.LASTUPDATEBY = user;
+end ^^
+SET TERM ; ^^
+/*******************************************************************************
+ * Trigger LEASEINFODTL_ID on table/view LEASEINFODTL
+ ******************************************************************************/
+
+SET TERM ^^ ;
+CREATE TRIGGER LEASEINFODTL_ID FOR LEASEINFODTL ACTIVE BEFORE INSERT POSITION 0 AS
+/*
+  You can change this template in the template editor:
+  File | Preferences | Object Templates
+*/
+begin
+  if ( (new.LEASEINFOID is null) or (new.LEASEINFOID = 0) )
+  then new.LEASEINFOID = gen_id(LEASEINFODTL_GEN, 1);
+end ^^
+SET TERM ; ^^
+/*******************************************************************************
+ * Trigger LKDBLOCN_ID on table/view LKDBLOCN
+ ******************************************************************************/
+
+SET TERM ^^ ;
+CREATE TRIGGER LKDBLOCN_ID FOR LKDBLOCN ACTIVE BEFORE INSERT POSITION 0 AS
+/*
+  You can change this template in the template editor:
+  File | Preferences | Object Templates
+*/
+begin
+  if ( (new.ID is null) or (new.ID = 0) )
+  then new.ID = gen_id(LKDBLOCN_GEN, 1);
+end ^^
+SET TERM ; ^^
+/*******************************************************************************
+ * Trigger LKDEPARTMENT_CREATED on table/view LKDEPARTMENT
+ ******************************************************************************/
+
+SET TERM ^^ ;
+CREATE TRIGGER LKDEPARTMENT_CREATED FOR LKDEPARTMENT ACTIVE BEFORE INSERT POSITION 0 AS
+/*
+  You can change this template in the template editor:
+  File | Preferences | Object Templates
+
+  Trigger:
+
+  Author   : , 
+  Date     : 3/24/2011 10:02:56 AM
+  Purpose  :
+*/
+begin
+  NEW.CREATEDDATE = 'now';
+  NEW.CREATEDBY = user;
+end ^^
+SET TERM ; ^^
+/*******************************************************************************
+ * Trigger LKDEPARTMENT_UPDATED on table/view LKDEPARTMENT
+ ******************************************************************************/
+
+SET TERM ^^ ;
+CREATE TRIGGER LKDEPARTMENT_UPDATED FOR LKDEPARTMENT ACTIVE BEFORE UPDATE POSITION 0 AS
+/*
+  You can change this template in the template editor:
+  File | Preferences | Object Templates
+
+  Trigger:
+
+  Author   : , 
+  Date     : 3/24/2011 10:21:24 AM
+  Purpose  :
+*/
+begin
+  NEW.LASTUPDATEDATE = 'now';
+  NEW.LASTUPDATEBY = user;
+end ^^
+SET TERM ; ^^
+/*******************************************************************************
+ * Trigger LKGENDTL_CREATED on table/view LKGENDTL
+ ******************************************************************************/
+
+SET TERM ^^ ;
+CREATE TRIGGER LKGENDTL_CREATED FOR LKGENDTL ACTIVE BEFORE INSERT POSITION 0 AS
+/*
+  You can change this template in the template editor:
+  File | Preferences | Object Templates
+
+  Trigger:
+
+  Author   : , 
+  Date     : 7/18/2013 6:24:27 PM
+  Purpose  :
+*/
+begin
+  NEW.CREATEDDATE = 'NOW';
+  NEW.CREATEDBY = user;
+end ^^
+SET TERM ; ^^
+/*******************************************************************************
+ * Trigger LKGENDTL_UPDATED on table/view LKGENDTL
+ ******************************************************************************/
+
+SET TERM ^^ ;
+CREATE TRIGGER LKGENDTL_UPDATED FOR LKGENDTL ACTIVE BEFORE UPDATE POSITION 0 AS
+/*
+  You can change this template in the template editor:
+  File | Preferences | Object Templates
+
+  Trigger:
+
+  Author   : , 
+  Date     : 7/18/2013 6:24:27 PM
+  Purpose  :
+*/
+begin
+  NEW.LASTUPDATEDATE = 'NOW';
+  NEW.LASTUPDATEBY = user;
+end ^^
+SET TERM ; ^^
+/*******************************************************************************
+ * Trigger LKGENMASTER_CREATED on table/view LKGENMASTER
+ ******************************************************************************/
+
+SET TERM ^^ ;
+CREATE TRIGGER LKGENMASTER_CREATED FOR LKGENMASTER ACTIVE BEFORE INSERT POSITION 0 AS
+/*
+  You can change this template in the template editor:
+  File | Preferences | Object Templates
+
+  Trigger:
+
+  Author   : , 
+  Date     : 7/18/2013 10:04:59 AM
+  Purpose  :
+*/
+begin
+  NEW.CREATEDDATE = 'NOW';
+  NEW.CREATEDBY = user;
+end ^^
+SET TERM ; ^^
+/*******************************************************************************
+ * Trigger LKGENMASTER_UPDATED on table/view LKGENMASTER
+ ******************************************************************************/
+
+SET TERM ^^ ;
+CREATE TRIGGER LKGENMASTER_UPDATED FOR LKGENMASTER ACTIVE BEFORE UPDATE POSITION 0 AS
+/*
+  You can change this template in the template editor:
+  File | Preferences | Object Templates
+
+  Trigger:
+
+  Author   : , 
+  Date     : 7/18/2013 10:05:19 AM
+  Purpose  :
+*/
+begin
+  NEW.LASTUPDATEDATE = 'NOW';
+  NEW.LASTUPDATEBY = user;
+end ^^
+SET TERM ; ^^
+/*******************************************************************************
+ * Trigger LKSLOCN_ID on table/view LKSLOCN
+ ******************************************************************************/
+
+SET TERM ^^ ;
+CREATE TRIGGER LKSLOCN_ID FOR LKSLOCN ACTIVE BEFORE INSERT POSITION 0 AS
+/*
+  You can change this template in the template editor:
+  File | Preferences | Object Templates
+*/
+begin
+  if ( (new.LKSLOCN_ID is null) or (new.LKSLOCN_ID = 0) )
+  then new.LKSLOCN_ID = gen_id(LKSLOCN_GEN, 1);
+end ^^
+SET TERM ; ^^
+/*******************************************************************************
+ * Trigger SAPDETAILS_ID on table/view SAPDETAILS
+ ******************************************************************************/
+
+SET TERM ^^ ;
+CREATE TRIGGER SAPDETAILS_ID FOR SAPDETAILS ACTIVE BEFORE INSERT POSITION 0 AS
+/*
+  You can change this template in the template editor:
+  File | Preferences | Object Templates
+*/
+begin
+  if ( (new.ID is null) or (new.ID = 0) )
+  then new.ID = gen_id(SAPDETAILS_GEN, 1);
+end ^^
+SET TERM ; ^^
+/*******************************************************************************
+ * Trigger SLOCNDTL_ID on table/view SLOCNDTL
+ ******************************************************************************/
+
+SET TERM ^^ ;
+CREATE TRIGGER SLOCNDTL_ID FOR SLOCNDTL ACTIVE BEFORE INSERT POSITION 0 AS
+/*
+  You can change this template in the template editor:
+  File | Preferences | Object Templates
+*/
+begin
+  if ( (new.SLOCNID is null) or (new.SLOCNID = 0) )
+  then new.SLOCNID = gen_id(SLOCNDTL_GEN, 1);
+end ^^
+SET TERM ; ^^
+/*******************************************************************************
+ * Trigger STADMINUSER_CREATED on table/view STADMINUSER
+ ******************************************************************************/
+
+SET TERM ^^ ;
+CREATE TRIGGER STADMINUSER_CREATED FOR STADMINUSER ACTIVE BEFORE INSERT POSITION 0 AS
+/*
+  You can change this template in the template editor:
+  File | Preferences | Object Templates
+
+  Trigger:
+
+  Author   : , 
+  Date     : 2/27/2012 5:29:17 PM
+  Purpose  :
+*/
+begin
+  NEW.CREATEDDATE = 'now';
+  NEW.CREATEDBY = user;
+end ^^
+SET TERM ; ^^
+/*******************************************************************************
+ * Trigger STADMINUSER_LASTUPDATE on table/view STADMINUSER
+ ******************************************************************************/
+
+SET TERM ^^ ;
+CREATE TRIGGER STADMINUSER_LASTUPDATE FOR STADMINUSER ACTIVE BEFORE UPDATE POSITION 0 AS
+/*
+  You can change this template in the template editor:
+  File | Preferences | Object Templates
+
+  Trigger:
+
+  Author   : , 
+  Date     : 2/27/2012 5:28:41 PM
+  Purpose  :
+*/
+begin
+  NEW.LASTUPDATEDATE = 'now';
+  NEW.LASTUPDATEBY = user;
+end ^^
+SET TERM ; ^^
+/*******************************************************************************
+ * Trigger STREQUIRE_CREATED on table/view STREQUIRE
+ ******************************************************************************/
+
+SET TERM ^^ ;
+CREATE TRIGGER STREQUIRE_CREATED FOR STREQUIRE ACTIVE BEFORE INSERT POSITION 0 AS
+/*
+  You can change this template in the template editor:
+  File | Preferences | Object Templates
+
+  Trigger:
+
+  Author   : , 
+  Date     : 7/22/2013 5:33:25 PM
+  Purpose  :
+*/
+begin
+     NEW.CREATEDDATE = 'NOW';
+     NEW.CREATEDBY = user;
+end ^^
+SET TERM ; ^^
+/*******************************************************************************
+ * Trigger STREQUIRE_UPDATED on table/view STREQUIRE
+ ******************************************************************************/
+
+SET TERM ^^ ;
+CREATE TRIGGER STREQUIRE_UPDATED FOR STREQUIRE ACTIVE BEFORE UPDATE POSITION 0 AS
+/*
+  You can change this template in the template editor:
+  File | Preferences | Object Templates
+
+  Trigger:
+
+  Author   : , 
+  Date     : 7/22/2013 5:33:25 PM
+  Purpose  :
+*/
+begin
+     NEW.LASTUPDATEDATE = 'NOW';
+     NEW.LASTUPDATEBY = user;
+end ^^
+SET TERM ; ^^
+/*******************************************************************************
+ * Trigger STROUTE_CREATED on table/view STROUTE
+ ******************************************************************************/
+
+SET TERM ^^ ;
+CREATE TRIGGER STROUTE_CREATED FOR STROUTE ACTIVE BEFORE INSERT POSITION 0 AS
+/*
+  You can change this template in the template editor:
+  File | Preferences | Object Templates
+
+  Trigger:
+
+  Author   : , 
+  Date     : 7/18/2013 11:06:54 AM
+  Purpose  :
+*/
+begin
+  NEW.CREATEDDATE = 'NOW';
+  NEW.CREATEDBY = user;
+end ^^
+SET TERM ; ^^
+/*******************************************************************************
+ * Trigger STROUTE_UPDATED on table/view STROUTE
+ ******************************************************************************/
+
+SET TERM ^^ ;
+CREATE TRIGGER STROUTE_UPDATED FOR STROUTE ACTIVE BEFORE UPDATE POSITION 0 AS
+/*
+  You can change this template in the template editor:
+  File | Preferences | Object Templates
+
+  Trigger:
+
+  Author   : , 
+  Date     : 7/18/2013 11:07:14 AM
+  Purpose  :
+*/
+begin
+  NEW.LASTUPDATEDATE = 'NOW';
+  NEW.LASTUPDATEBY = user;
+end ^^
+SET TERM ; ^^
+/*******************************************************************************
+ * Trigger USERROLE_CREATED on table/view USERROLE
+ ******************************************************************************/
+
+SET TERM ^^ ;
+CREATE TRIGGER USERROLE_CREATED FOR USERROLE ACTIVE BEFORE INSERT POSITION 0 AS
+/*
+  You can change this template in the template editor:
+  File | Preferences | Object Templates
+
+  Trigger:
+
+  Author   : , 
+  Date     : 7/16/2013 3:07:31 PM
+  Purpose  :
+*/
+begin
+  NEW.CREATEDDATE = 'NOW';
+  NEW.CREATEDBY = user;
+end ^^
+SET TERM ; ^^
+/*******************************************************************************
+ * Trigger USERROLE_UPDATED on table/view USERROLE
+ ******************************************************************************/
+
+SET TERM ^^ ;
+CREATE TRIGGER USERROLE_UPDATED FOR USERROLE ACTIVE BEFORE UPDATE POSITION 0 AS
+/*
+  You can change this template in the template editor:
+  File | Preferences | Object Templates
+
+  Trigger:
+
+  Author   : , 
+  Date     : 7/16/2013 3:08:46 PM
+  Purpose  :
+*/
+begin
+  NEW.LASTUPDATEDATE = 'NOW';
+  NEW.LASTUPDATEBY = user;
+end ^^
+SET TERM ; ^^
+SET TERM ^^ ;
+/*******************************************************************************
+ * Procedure Bodies
+ * ----------------
+ * Extracted at 8/3/2013 9:44:30 AM
+ ******************************************************************************/
+
+ALTER PROCEDURE P_LIST_BRANCH returns (
+  O_BRANCHCODE Char(4), 
+  O_BUGROUPCODE Char(2), 
+  O_BUGROUPDESC VarChar(50), 
+  O_COMPANYNAMESHORT VarChar(15), 
+  O_BRANCHNAME VarChar(100), 
+  O_TRADENAMESHORT VarChar(15), 
+  O_OPENDATE Date, 
+  O_CLOSEDATE Date, 
+  O_CREATEDDATE Timestamp, 
+  O_MAINBRANCHCODE Char(4), 
+  O_MAINBUGROUPCODE Char(2), 
+  O_STORELVLCODE Char(10), 
+  O_STORELVLDESC VarChar(50), 
+  O_MAINBRANCHNAME VarChar(100)) AS 
+/*
+  You can change this template in the template editor:
+  File | Preferences | Object Templates
+
+  Procedure:
+  Author   : , 
+  Date     : 2/24/2012 9:17:12 AM
+  Purpose  :
+  Params
+  ------
+  <param>  : <purpose>
+*/
+
+begin 
+      for
+        select a.BRANCHCODE,a.BUGROUPCODE, b.BUGROUPDESC,c.COMPANYNAMESHORT AS COMPANYCODE,a.BRANCHNAME,
+               l.TRADENAMESHORT AS TRADENAMECODE,
+               /*p.BRANCHNAME as mainbranch_s, */
+               a.OPENDATE,a.CLOSEDATE          
+        from BRANCH a
+        join LKBUGROUP b
+        on b.BUGROUPCODE = a.BUGROUPCODE
+        join LKCOMPANY c
+        on c.COMPANYCODE = a.COMPANYCODE
+        join LKTRADENAME l
+        on l.TRADENAMECODE = a.TRADENAMECODE
+        
+        order by a.CREATEDDATE desc
+         
+        into :O_BRANCHCODE, :O_BUGROUPCODE, :O_BUGROUPDESC, :O_COMPANYNAMESHORT,:O_BRANCHNAME, :O_TRADENAMESHORT, 
+             :O_OPENDATE,:O_CLOSEDATE
+      do begin                      
+        select first 1 a.MAINBRANCHCODE,a.MAINBUGROUPCODE,d.STORELVLCODE,d.STORELVLDESC,e.BRANCHNAME
+        from BRANCHLVLHIST a 
+        join LKSTORELVL d
+        on d.STORELVLCODE = a.STORELVLCODE
+        left join BRANCH e
+        on e.BRANCHCODE = a.MAINBRANCHCODE and e.BUGROUPCODE = a.MAINBUGROUPCODE  
+       
+        where a.BRANCHCODE = :O_BRANCHCODE and a.BUGROUPCODE = :O_BUGROUPCODE 
+        order by a.branchlvlhistid desc
+        into :O_MAINBRANCHCODE, :O_MAINBUGROUPCODE, :O_STORELVLCODE, :O_STORELVLDESC,:O_MAINBRANCHNAME;
+          
+        suspend;
+      end 
+end ^^
+SET TERM ; ^^
